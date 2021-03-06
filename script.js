@@ -1,22 +1,22 @@
-let FillAll = false; /** check all valid checkboxes */
-let FillActual = false; /** check actual valid check boxes */
-let SolveAll = false; /** check and valid all checkboxes -- trim bad answers */
-let SolveActual = false; /** check and valid actual checkboxes -- trim bad answers */
-let SendAll = false; /** checkbox send result */
-let Reset = false; /** reset score (State) */
-let TotalScore = SumTotalScore();
-let HPStartTime = HP.starttime.toString(); /** const */
+let FillAllAnswers = false; /** check all valid checkboxes */
+let FillActualAnswer = false; /** check actual valid check boxes */
+let SolveAllQuestions = false; /** check and valid all checkboxes -- trim bad answers */
+let SolveActualQuestion = false; /** check and valid actual checkboxes -- trim bad answers */
+let SendItToCheck = false; /** checkbox send result */
+let ResetQuest = false; /** reset score (State) */
 
 /**** CONTENT ****/
 
+let HPStartTime = HP.starttime.toString(); /** const */
+let TotalScore = SumTotalScore();
 let ChangeStartTime = false;
 
 let GapInput;
 
 function init() {
     if (document.querySelector('#OneByOneReadout') && document.querySelector('#OneByOneReadout').style.display === 'none') {
-        SolveActual = false;
-        FillActual = false;
+        SolveActualQuestion = false;
+        FillActualAnswer = false;
         //todo blank buttons
     }
     if (document.querySelector('#Instructions'))
@@ -27,7 +27,7 @@ function Solver() {
     init();
     let ActualPageNum;
     let ActualQuestionNum = 0;
-    if (SolveActual || FillActual)
+    if (SolveActualQuestion || FillActualAnswer)
         ActualPageNum = parseInt(document.querySelector('.QNum').textContent.match(/\d+/)[0]);
     let AnswersType;
 
@@ -36,16 +36,16 @@ function Solver() {
         if (val.includes('CheckAnswers()')) {
             if (typeof Status === undefined) {
                 AnswersType = 'SelectAnswers';
-                if (SolveAll || SolveActual || FillAll || FillActual || Reset)
+                if (SolveAllQuestions || SolveActualQuestion || FillAllAnswers || FillActualAnswer || ResetQuest)
                     SolveSelect();
             } else {
                 AnswersType = 'TypingAnswer';
-                if (SolveAll || SolveActual || FillAll || FillActual || Reset)
+                if (SolveAllQuestions || SolveActualQuestion || FillAllAnswers || FillActualAnswer || ResetQuest)
                     SolveTyping();
             }
         } else if (val.includes('CheckAnswer(0)')) {
             AnswersType = 'MakeASentence';
-            if (SolveAll || SolveActual || FillAll || FillActual || Reset)
+            if (SolveAllQuestions || SolveActualQuestion || FillAllAnswers || FillActualAnswer || ResetQuest)
                 SolveSentence();
         } else if (val.includes('CheckMultiSelAnswer(')) {
             AnswersType = 'CheckAnswers';
@@ -53,20 +53,20 @@ function Solver() {
             const AnsNumStartIndex = val.search(/CheckMultiSelAnswer\(\d+\)/) + 20;
             const AnsIndex = val.substr(AnsNumStartIndex, 3).match(/\d+/)[0];
 
-            if (SolveAll || FillAll || Reset || ((SolveActual || FillActual) && ActualPageNum === ActualQuestionNum))
+            if (SolveAllQuestions || FillAllAnswers || ResetQuest || ((SolveActualQuestion || FillActualAnswer) && ActualPageNum === ActualQuestionNum))
                 SolveOneOfMultiCheck(AnsIndex);
         }
     });
-    if (SendAll && AnswersType === 'CheckAnswers')
+    if (SendItToCheck && AnswersType === 'CheckAnswers')
         CheckFinished();
-    else if (SendAll && AnswersType === 'MakeASentence')
+    else if (SendItToCheck && AnswersType === 'MakeASentence')
         CheckAnswer(0);
-    else if (SendAll && (AnswersType === 'SelectAnswers' || AnswersType === 'TypingAnswer'))
+    else if (SendItToCheck && (AnswersType === 'SelectAnswers' || AnswersType === 'TypingAnswer'))
         CheckAnswers();
 }
 
 function SolveSelect() {
-    if (Reset) {
+    if (ResetQuest) {
         CreateStatusArrays();
         ResetHP();
     }
@@ -74,13 +74,13 @@ function SolveSelect() {
         if (document.querySelector(`#${Status[index][2]}`)) {
             const Question = document.querySelector(`#${Status[index][2]}`);
             const AnswerIndex = GetKeyFromSelect(Question);
-            Reset ? Question.selectedIndex = 0 : Question.selectedIndex = AnswerIndex + 1;
+            ResetQuest ? Question.selectedIndex = 0 : Question.selectedIndex = AnswerIndex + 1;
         }
     });
 }
 
 function SolveSentence() {
-    if (Reset) {
+    if (ResetQuest) {
         for (let i = 0; i < 50; i++)
             Undo();
         Penalties = 0;
@@ -107,7 +107,7 @@ function SolveTyping() { //todo improve fill - if is answer in the box fill next
             }
         }
     }
-    if (Reset) {
+    if (ResetQuest) {
         Score = 0;
         State = [];
         State.length = 0;
@@ -126,25 +126,25 @@ function SolveTyping() { //todo improve fill - if is answer in the box fill next
     I.forEach((value, index) => {
         if (document.querySelector(`#Gap${index}`)) {
             const segment = document.querySelector(`#Gap${index}`);
-            Reset ? segment.value = '' : segment.value = I[index][1][0];
+            ResetQuest ? segment.value = '' : segment.value = I[index][1][0];
         }
     });
 }
 
 function SolveOneOfMultiCheck(AnsIndex) {
-    if (SolveAll || SolveActual || Reset) {
-        if (Reset) {
+    if (SolveAllQuestions || SolveActualQuestion || ResetQuest) {
+        if (ResetQuest) {
             CreateStatusArray();
             ResetHP();
         }
         for (let AIndex = 0; AIndex < I[AnsIndex][3].length; AIndex++) {
-            if (Reset)
+            if (ResetQuest)
                 document.querySelector('#Q_' + AnsIndex + '_' + AIndex + '_Chk').checked = false;
             else
                 document.querySelector('#Q_' + AnsIndex + '_' + AIndex + '_Chk').checked = I[AnsIndex][3][AIndex][3] === 100;
         }
-        if (!Reset) CheckMultiSelAnswer(AnsIndex);
-    } else if (FillAll || FillActual) {
+        if (!ResetQuest) CheckMultiSelAnswer(AnsIndex);
+    } else if (FillAllAnswers || FillActualAnswer) {
         for (let AIndex = 0; AIndex < I[AnsIndex][3].length; AIndex++) {
             if (I[AnsIndex][3][AIndex][3] === 100)
                 document.querySelector('#Q_' + AnsIndex + '_' + AIndex + '_Chk').checked = true;
