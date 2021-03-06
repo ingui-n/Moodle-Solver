@@ -1,12 +1,15 @@
-let FillAll = false; // check all valid checkboxes
-let FillActual = false; // check actual valid check boxes
-let SolveAll = false; // check and valid all checkboxes -- trim bad answers
-let SolveActual = false; // check and valid actual checkboxes -- trim bad answers
-let SendAll = false; //checkbox send result
-let Reset = false; // reset score (State)
-let ChangeStartTime = false;
+let FillAll = false; /** check all valid checkboxes */
+let FillActual = false; /** check actual valid check boxes */
+let SolveAll = false; /** check and valid all checkboxes -- trim bad answers */
+let SolveActual = false; /** check and valid actual checkboxes -- trim bad answers */
+let SendAll = false; /** checkbox send result */
+let Reset = false; /** reset score (State) */
 let TotalScore = SumTotalScore();
-let HPStartTime = HP.starttime.toString() //const
+let HPStartTime = HP.starttime.toString(); /** const */
+
+/**** CONTENT ****/
+
+let ChangeStartTime = false;
 
 let GapInput;
 
@@ -66,7 +69,7 @@ function SolveSelect() {
     if (Reset) {
         CreateStatusArrays();
         ResetHP();
-    }//todo check Score
+    }
     Status.forEach((value, index) => {
         if (document.querySelector(`#${Status[index][2]}`)) {
             const Question = document.querySelector(`#${Status[index][2]}`);
@@ -95,8 +98,7 @@ function SolveSentence() {
     });
 }
 
-function SolveTyping() { //todo improve fill - if is answer in the box next!
-    //todo - improve number of tries if reset
+function SolveTyping() { //todo improve fill - if is answer in the box fill next!
     if (GapInput === undefined) {
         for (let i = 1; i < 20; i++) {
             if (document.querySelector(`#Gap${i}`)) {
@@ -151,7 +153,7 @@ function SolveOneOfMultiCheck(AnsIndex) {
 }
 
 function SumTotalScore() {
-    if (typeof CalculateOverallScore === "function") {
+    if (typeof CalculateOverallScore === 'function') {
         CalculateOverallScore();
         return Score;
     }
@@ -174,4 +176,4 @@ function ModifyHPStartTime(NewTime) {
     HP.starttime = new Date(NewTime + LastPartOfTheTime);
 }
 
-Solver();
+//Solver();
