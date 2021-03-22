@@ -3,7 +3,7 @@
 
     const query = {active: true, currentWindow: true};
 
-    document.addEventListener('readystatechange', (e) => {
+    document.addEventListener('readystatechange', e => {
         if (e.target.readyState === 'complete') {
 
             chrome.tabs.query(query, tabs => {
@@ -15,17 +15,16 @@
     });
 
     async function GetScript() {
-
         const bFillAll = document.querySelector('.btn__fill-all');
         const bFillOne = document.querySelector('.btn__fill-one');
         const bSolveAll = document.querySelector('.btn__solve-all');
         const bSolveOne = document.querySelector('.btn__solve-one');
         const bReset = document.querySelector('.btn__reset');
-        const bSend = document.querySelector('.btn__send');
         const cShuffle = document.querySelector('.chk__shuffle-questions');
+        const bSend = document.querySelector('.btn__send');
 
         chrome.tabs.executeScript(null, {file: '/src/scripts/content.js'});
-
+        //todo divide solver script to extra files > call file directly
         /** Calls script from content.js *///todo move to message
         function CreateStaticListener(element, type) {
             element.addEventListener('click', () => {
@@ -82,41 +81,30 @@
             return Storage['StaticOptions'];
         }
 
-        async function SetupStaticListener(element, option) {
+        async function SetupStaticListener(element, value, option) {
             const StaticOptions = await GetStaticOptions();
 
-            if (StaticOptions[option] === true) {
+            if (StaticOptions[value] === true) {
                 element.addEventListener('click', () => {
                     //todo message to content.js
+                    console.log('dsf');
+                    chrome.runtime.sendMessage({getContentScript: option});
                 });
             }
         }
 
-        await SetupStaticListener(bFillAll, 'fill-all');
+        await SetupStaticListener(bFillAll, 'EnableFillAll', 'fill-all');
+        await SetupStaticListener(bFillOne, 'EnableFillOne', 'fill-one');
+        await SetupStaticListener(bSolveAll, 'EnableSolveAll', 'solve-all');
+        await SetupStaticListener(bSolveOne, 'EnableSolveOne', 'solve-one');
+        await SetupStaticListener(bReset, 'EnableReset', 'reset');
+        await SetupStaticListener(bSend, 'EnableSend', 'send');
 
         await SetupLabelListener(cShuffle, 'ShuffleQuestions', 'Checkbox');
 /*
-        function CreateDynamicsListener(element, type, variable) {
-            element.addEventListener('click', () => {
-                let types = {
-                    'Checkbox': element.checked
-                };
-                chrome.storage.local.set({[variable]: types[type]});
-            });
-        }
 
-        function SetDynamicsCheckboxValue(element, type, variable) {
-            chrome.storage.local.get([variable], res => {
-                element.checked = typeof res === 'undefined' ? false : res[variable];
-            });
-        }
 
-        async function GetQuestionType() {
-            const Storage = await new Promise(res => chrome.storage.local.get('ExamType', res));
-            return Storage['ExamType'];
-        }
-
-        async function SetLabelListeners() {
+      async function SetLabelListeners() {
             const QuestionType = await GetQuestionType();
 
             if (QuestionType === 'SelectAnswers') {
@@ -128,18 +116,11 @@
         //const CurrentHostOptions = await GetHostOptions();
         //console.log(CurrentHostOptions);
 
-
-        //await SetLabelListeners();
-
-        CreateStaticListener(bFillAll, 'fill-all');
+        /*CreateStaticListener(bFillAll, 'fill-all');
         CreateStaticListener(bFillOne, 'fill-one');
         CreateStaticListener(bSolveAll, 'solve-all');
         CreateStaticListener(bSolveOne, 'solve-one');
-        CreateStaticListener(bReset, 'reset');
-
-        //CreateDynamicsListener(cShuffle, 'Checkbox', 'ShuffleQuestions');
-
-        //SetDynamicsCheckboxValue(cShuffle, 'Checkbox', 'ShuffleQuestions');
+        CreateStaticListener(bReset, 'reset');*/
     }
 
     function PrintBadWebSite() {

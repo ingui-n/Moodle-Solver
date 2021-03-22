@@ -2,8 +2,20 @@ function AddToWebSite(script) {
     let innerScript = document.createElement('script');
     innerScript.innerHTML = script;
     document.head.appendChild(innerScript);
-    innerScript.remove();
+    //innerScript.remove();
 }
+
+chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
+    document.querySelector('.ExerciseTitle').textContent = 'dfsfddsf';
+    if (req.getContentScript) {
+        console.log('delivered: ' + req.getContentScript);
+    }
+    sendResponse({popupContent: 'success'})
+
+    AddToWebSite('console.log(req)');
+    AddToWebSite(console.log(sender));
+    AddToWebSite(console.log(sendResponse));
+});
 
 async function GetSolverScript(type) {
     let script,
@@ -447,4 +459,5 @@ function SolverReset(QuestionType) { //todo TEST reset
 
     return fun[QuestionType] ? fun[QuestionType]() : null;
 }
+
 //todo add 'MultiAnswers'

@@ -1,12 +1,16 @@
 !function () {
     "use strict";
 
-    //todo add new listener on change window
     chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-        if (changeInfo.status === 'loading' && TestUrl(tab.url)) {
+        CallBackgroundScript(changeInfo, tab);
+    });
+
+    /** Calls the BackgroundContent script */
+    function CallBackgroundScript(tabInfo, tab) {
+        if (tabInfo.status === 'loading' && TestUrl(tab.url)) {
             chrome.tabs.executeScript(null, {file: '/src/scripts/BackgroundContent.js'});
         }
-    });
+    }
 
     /** Check URL if is MOODLE */
     function TestUrl(url) {
