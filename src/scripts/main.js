@@ -23,21 +23,6 @@
         const cShuffle = document.querySelector('.chk__shuffle-questions');
         const bSend = document.querySelector('.btn__send');
 
-        chrome.tabs.executeScript(null, {file: '/src/scripts/content.js'});
-        //todo divide solver script to extra files > call file directly
-        /** Calls script from content.js *///todo move to message
-        function CreateStaticListener(element, type) {
-            element.addEventListener('click', () => {
-                chrome.tabs.query(query, tabs => {
-                        chrome.tabs.executeScript(
-                            tabs[0].id,
-                            {code: `GetSolverScript('${type}');`}
-                        );
-                    }
-                );
-            });
-        }
-
         /** Gets Host Options from local storage */
         async function GetHostOptions() {
             const Storage = await new Promise(res => chrome.storage.local.get('HostOptions', res));
@@ -81,46 +66,24 @@
             return Storage['StaticOptions'];
         }
 
-        async function SetupStaticListener(element, value, option) {
+        async function SetupStaticListener(element, value, fileName) {
             const StaticOptions = await GetStaticOptions();
 
             if (StaticOptions[value] === true) {
                 element.addEventListener('click', () => {
-                    //todo message to content.js
-                    console.log('dsf');
-                    chrome.runtime.sendMessage({getContentScript: option});
+                    chrome.tabs.executeScript(null, {file: `/src/scripts/solver/${fileName}.js`});
                 });
             }
         }
 
-        await SetupStaticListener(bFillAll, 'EnableFillAll', 'fill-all');
-        await SetupStaticListener(bFillOne, 'EnableFillOne', 'fill-one');
-        await SetupStaticListener(bSolveAll, 'EnableSolveAll', 'solve-all');
-        await SetupStaticListener(bSolveOne, 'EnableSolveOne', 'solve-one');
-        await SetupStaticListener(bReset, 'EnableReset', 'reset');
-        await SetupStaticListener(bSend, 'EnableSend', 'send');
+        await SetupStaticListener(bFillAll, 'FillAll', 'FillAllAnswers');
+        await SetupStaticListener(bFillOne, 'FillOne', 'FillOneAnswer');
+        await SetupStaticListener(bSolveAll, 'SolveAll', 'SolveAllQuestions');
+        await SetupStaticListener(bSolveOne, 'SolveOne', 'SolveOneQuestion');
+        await SetupStaticListener(bReset, 'Reset', 'ResetExercise');
+        await SetupStaticListener(bSend, 'Send', 'SendExercise');
 
         await SetupLabelListener(cShuffle, 'ShuffleQuestions', 'Checkbox');
-/*
-
-
-      async function SetLabelListeners() {
-            const QuestionType = await GetQuestionType();
-
-            if (QuestionType === 'SelectAnswers') {
-                bReset.disabled = true;
-            }
-            //todo
-        }*/
-
-        //const CurrentHostOptions = await GetHostOptions();
-        //console.log(CurrentHostOptions);
-
-        /*CreateStaticListener(bFillAll, 'fill-all');
-        CreateStaticListener(bFillOne, 'fill-one');
-        CreateStaticListener(bSolveAll, 'solve-all');
-        CreateStaticListener(bSolveOne, 'solve-one');
-        CreateStaticListener(bReset, 'reset');*/
     }
 
     function PrintBadWebSite() {

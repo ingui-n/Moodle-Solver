@@ -64,12 +64,12 @@ async function ModifyWebsite() {
 /** Sets Website Options to local storage */
 function SetStaticVariables(ExamType) {
     let WebsiteOptions = {
-        'EnableFillAll': true,
-        'EnableFillOne': true,
-        'EnableSolveAll': true,
-        'EnableSolveOne': true,
-        'EnableReset': true,
-        'EnableSend': true
+        'FillAll': true,
+        'FillOne': true,
+        'SolveAll': true,
+        'SolveOne': true,
+        'Reset': true,
+        'Send': true
     };
 
     switch (ExamType) {

@@ -1,6 +1,6 @@
 !function () {
     "use strict";
-
+//todo add listener
     chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
         CallBackgroundScript(changeInfo, tab);
     });
