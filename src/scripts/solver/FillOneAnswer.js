@@ -17,7 +17,8 @@ async function init() {
         'SelectAnswers': SolverSelectAnswers.toString() + `SolverSelectAnswers('${QuestionType}');`,
         'TypingAnswers': SolverTypingAnswers.toString() + `SolverTypingAnswers('${QuestionType}');`,
         'MakeASentence': SolverMakeASentence.toString() + `SolverMakeASentence('${QuestionType}');`,
-        'MultiAnswers': SolverMultiAnswers.toString() + `SolverMultiAnswers('${QuestionType}');`
+        'MultiAnswers': SolverMultiAnswers.toString() + `SolverMultiAnswers('${QuestionType}');`,
+        'CardsAnswers': SolverCardsQuestions.toString() + `SolverCardsQuestions('${QuestionType}');`
     };
 
     let script = fun[QuestionType] || null;
@@ -96,5 +97,16 @@ function SolverMultiAnswers() {
             }
         }
         if (AnsFilled) break;
+    }
+}
+
+function SolverCardsQuestions() {
+    for (let i = 0; i < D.length; i++) {
+        if (D[i][2] === 0 || DC[i].tag < 1) {
+            D[i][2] = D[i][1];
+            DC[i].DockToR(FC[F[D[i][1] - 1][1] - 1]);
+            DC[i].tag = F[D[i][1] - 1][1];
+            return;
+        }
     }
 }

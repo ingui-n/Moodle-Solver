@@ -14,11 +14,11 @@ async function init() {
     let QuestionType = await GetQuestionType();
 
     let fun = {
-        'SelectAnswers': SolverSelectAnswers.toString() + `SolverSelectAnswers('${QuestionType}');`,
         'TypingAnswers': SolverTypingAnswers.toString() + `SolverTypingAnswers('${QuestionType}');`,
         'MakeASentence': SolverMakeASentence.toString() + `SolverMakeASentence('${QuestionType}');`,
         'MultiAnswers': SolverMultiAnswers.toString() + `SolverMultiAnswers('${QuestionType}');`,
-        'ClickAnswers': SolverClickAnswers.toString() + `SolverClickAnswers('${QuestionType}');`
+        'ClickAnswers': SolverClickAnswers.toString() + `SolverClickAnswers('${QuestionType}');`,
+        'CardsAnswers': SolverCardsQuestions.toString() + `SolverCardsQuestions('${QuestionType}');`
     };
 
     let script = fun[QuestionType] || null;
@@ -30,10 +30,6 @@ init()
     .catch(e => console.log(e));
 
 /** Solvers */
-
-function SolverSelectAnswers() {
-    /** version 2 */
-}
 
 function SolverTypingAnswers() {
     window.StartedUp = false;
@@ -63,6 +59,7 @@ function SolverMultiAnswers() {
 }
 
 function SolverClickAnswers() {
+    Score = 0;
     const buttons = document.querySelectorAll('.FuncButton');
 
     buttons.forEach(value => {
@@ -77,4 +74,15 @@ function SolverClickAnswers() {
     QArray = QArray.slice(0, QuestionArray);
     ChangeQ(1);
     ChangeQ(-1);
+}
+
+function SolverCardsQuestions() {
+    AnswersTried = '';
+    Score = 0;
+    Penalties = 0;
+    DC.forEach((value, index) => {
+        DC[index].GoHome();
+        DC[index].tag = -1;
+        D[index][2] = 0;
+    });
 }

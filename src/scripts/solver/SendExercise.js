@@ -14,10 +14,10 @@ async function init() {
     let QuestionType = await GetQuestionType();
 
     let fun = {
-        'SelectAnswers': SolverSelectAnswers.toString() + `SolverSelectAnswers('${QuestionType}');`,
+        'SelectAnswers': SolverSelectQuestions.toString() + `SolverSelectAnswers('${QuestionType}');`,
         'TypingAnswers': SolverTypingAnswers.toString() + `SolverTypingAnswers('${QuestionType}');`,
         'MakeASentence': SolverMakeASentence.toString() + `SolverMakeASentence('${QuestionType}');`,
-        'MultiAnswers': SolverMultiAnswers.toString() + `SolverMultiAnswers('${QuestionType}');`,
+        'MultiAnswers': SolverMultiQuestions.toString() + `SolverMultiAnswers('${QuestionType}');`,
         'ClickAnswers': SolverClickAnswers.toString() + `SolverClickAnswers('${QuestionType}');`
     };
 

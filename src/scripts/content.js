@@ -1,3 +1,5 @@
+//MOODLE gallery version: "2010.04.21-21-51"
+
 function AddToWebSite(script) {
     let innerScript = document.createElement('script');
     innerScript.innerHTML = script;

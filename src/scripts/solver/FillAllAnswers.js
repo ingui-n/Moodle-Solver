@@ -14,10 +14,11 @@ async function init() {
     let QuestionType = await GetQuestionType();
 
     let fun = {
-        'SelectAnswers': SolverSelectAnswers.toString() + `SolverSelectAnswers('${QuestionType}');`,
-        'TypingAnswers': SolverTypingAnswers.toString() + `SolverTypingAnswers('${QuestionType}');`,
+        'SelectAnswers': SolverSelectQuestions.toString() + `SolverSelectQuestions('${QuestionType}');`,
+        'TypingAnswers': SolverTypingQuestions.toString() + `SolverTypingQuestions('${QuestionType}');`,
         'MakeASentence': SolverMakeASentence.toString() + `SolverMakeASentence('${QuestionType}');`,
-        'MultiAnswers': SolverMultiAnswers.toString() + `SolverMultiAnswers('${QuestionType}');`
+        'MultiAnswers': SolverMultiQuestions.toString() + `SolverMultiAnswers('${QuestionType}');`,
+        'CardsAnswers': SolverCardsQuestions.toString() + `SolverCardsQuestions('${QuestionType}');`
     };
 
     let script = fun[QuestionType] || null;
@@ -30,7 +31,7 @@ init()
 
 /** Solvers */
 
-function SolverSelectAnswers() {
+function SolverSelectQuestions() {
     I.forEach((value, index) => {
         const segment = document.querySelector(`#Gap${index}`);
 
@@ -38,7 +39,7 @@ function SolverSelectAnswers() {
     });
 }
 
-function SolverTypingAnswers() {
+function SolverTypingQuestions() {
     Status.forEach((value, index) => {
         const Question = document.querySelector(`#${Status[index][2]}`);
 
@@ -66,7 +67,7 @@ function SolverMakeASentence() {
     });
 }
 
-function SolverMultiAnswers() {
+function SolverMultiQuestions() {
     const buttons = document.querySelectorAll('button');
 
     buttons.forEach(value => {
@@ -84,4 +85,19 @@ function SolverMultiAnswers() {
             });
         }
     });
+}
+
+function SolverCardsQuestions() {
+    D.forEach((value, index) => {
+        if (value[2] === 0 || DC[index].tag < 1) {
+            value[2] = value[1];
+            DC[index].DockToR(FC[F[D[index][1] - 1][1] - 1]);
+            DC[index].tag = F[D[index][1] - 1][1];
+        }
+    });
+
+
+    /*DC[CurrDrag].DockToR(FC[DropTarget]);
+    D[CurrDrag][2] = F[DropTarget][1];
+    DC[CurrDrag].tag = DropTarget + 1;*/
 }

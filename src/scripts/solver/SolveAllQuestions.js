@@ -18,7 +18,8 @@ async function init() {
         'TypingAnswers': SolverTypingAnswers.toString() + `SolverTypingAnswers('${QuestionType}');`,
         'MakeASentence': SolverMakeASentence.toString() + `SolverMakeASentence('${QuestionType}');`,
         'MultiAnswers': SolverMultiAnswers.toString() + `SolverMultiAnswers('${QuestionType}');`,
-        'ClickAnswers': SolverClickAnswers.toString() + `SolverClickAnswers('${QuestionType}');`
+        'ClickAnswers': SolverClickAnswers.toString() + `SolverClickAnswers('${QuestionType}');`,
+        'CardsAnswers': SolverCardsQuestions.toString() + `SolverCardsQuestions('${QuestionType}');`
     };
 
     let script = fun[QuestionType] || null;
@@ -106,4 +107,12 @@ function SolverClickAnswers() {
             }
         }
     }
+}
+
+function SolverCardsQuestions() {
+    D.forEach((value, index) => {
+        value[2] = value[1];
+        DC[index].DockToR(FC[F[D[index][1] - 1][1] - 1]);
+        DC[index].tag = F[D[index][1] - 1][1];
+    });
 }

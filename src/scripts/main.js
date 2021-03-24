@@ -14,6 +14,7 @@
         }
     });
 
+    /** Calls JS for popup.html content */
     async function GetScript() {
         const bFillAll = document.querySelector('.btn__fill-all');
         const bFillOne = document.querySelector('.btn__fill-one');
@@ -66,6 +67,7 @@
             return Storage['StaticOptions'];
         }
 
+        /** Setup click listeners for solver */
         async function SetupStaticListener(element, value, fileName) {
             const StaticOptions = await GetStaticOptions();
 
@@ -73,6 +75,8 @@
                 element.addEventListener('click', () => {
                     chrome.tabs.executeScript(null, {file: `/src/scripts/solver/${fileName}.js`});
                 });
+            } else {
+                element.disabled = true;
             }
         }
 
@@ -86,11 +90,13 @@
         await SetupLabelListener(cShuffle, 'ShuffleQuestions', 'Checkbox');
     }
 
+    /** Prints bad website message */
     function PrintBadWebSite() {
         //todo page width style
         document.querySelector('body').innerHTML = 'You must be on the moodle website!';
     }
 
+    /** Checks URL if is MOODLE */
     function CheckURL(url) {
         const match = url.match(/^https?:\/\/www\.([\w-]+)?\.?([\w-]+)?\.?([\w-]+)?\.?\.\w+\//);
 

@@ -1,3 +1,4 @@
+/** Add Host option script to the MOODLE website */
 function AddToWebSite(script) {
     let innerScript = document.createElement('script');
     innerScript.innerHTML = script;
@@ -5,26 +6,50 @@ function AddToWebSite(script) {
     innerScript.remove();
 }
 
+/** Returns Questions type of the exercise */
 function GetExamType() {
     const buttons = document.querySelectorAll('.FuncButton');//'button'
+
+    let ExamTypes = [],
+        ContentSelectAnswers;
 
     for (let i = 0; i < buttons.length; i++) {
         const button = buttons[i].outerHTML;
 
         if (button.includes('CheckAnswers()')) {
-            const SelectElements = document.querySelectorAll('select');
-            const FillElements = document.querySelectorAll('input[type=text]');
+            const SelectElements = document.querySelectorAll('select').length;
+            const FillElements = document.querySelectorAll('input[type=text]').length;
+            const CardElements = document.querySelectorAll('.CardStyle').length;
 
-            return SelectElements.length > FillElements.length ? 'SelectAnswers' : 'TypingAnswers';
+            if (CardElements > 0) {
+                ExamTypes.push('CardsAnswers');
+            } else if (SelectElements > FillElements) {
+                ExamTypes.push('SelectAnswers');
+
+                const SelectContent = document.querySelector('#Questions').outerHTML;
+
+                if (!ContentSelectAnswers) ContentSelectAnswers = SelectContent;
+            } else {
+                ExamTypes.push('TypingAnswers');
+            }
         } else if (button.includes('CheckAnswer(0)')) {
-            return 'MakeASentence';
+            ExamTypes.push('MakeASentence');
         } else if (button.includes('CheckMultiSelAnswer(')) {
-            return 'MultiAnswers';
+            ExamTypes.push('MultiAnswers');
         } else if (button.includes('CheckMCAnswer(')) {
-            return 'ClickAnswers';
+            ExamTypes.push('ClickAnswers');
         }
     }
-    return null;
+
+    if (!ExamTypes.includes('MultiAnswers') && !ExamTypes.includes('ClickAnswers')) {
+        ExamTypes = ExamTypes[0];
+    } else {
+        ExamTypes = [...new Set(ExamTypes)];
+    }
+
+    chrome.storage.local.set({'ContentSelectAnswers': ContentSelectAnswers});
+//todo ExamTypes can now be an array
+    return ExamTypes;
 }
 
 /** Gets Host Options from local storage */
@@ -74,7 +99,7 @@ function SetStaticVariables(ExamType) {
 
     switch (ExamType) {
         case 'SelectAnswers':
-            WebsiteOptions.EnableReset = false;
+            WebsiteOptions.Reset = false;
     }
 
     chrome.storage.local.set({'ExamType': ExamType});

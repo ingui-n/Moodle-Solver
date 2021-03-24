@@ -1,15 +1,21 @@
 !function () {
     "use strict";
-//todo add listener
+
+    chrome.tabs.onActivated.addListener(tab => {
+        chrome.tabs.get(tab.tabId, currentTabInfo => {
+            CallBackgroundScript(currentTabInfo.url);
+        });
+    })
+
     chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-        CallBackgroundScript(changeInfo, tab);
+        if (changeInfo.status === 'loading')
+            CallBackgroundScript(tab.url);
     });
 
     /** Calls the BackgroundContent script */
-    function CallBackgroundScript(tabInfo, tab) {
-        if (tabInfo.status === 'loading' && TestUrl(tab.url)) {
+    function CallBackgroundScript(url) {
+        if (TestUrl(url))
             chrome.tabs.executeScript(null, {file: '/src/scripts/BackgroundContent.js'});
-        }
     }
 
     /** Check URL if is MOODLE */
