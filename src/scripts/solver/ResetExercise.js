@@ -1,98 +1,128 @@
-async function GetQuestionType() {
-    const Storage = await new Promise(res => chrome.storage.local.get('ExamType', res));
-    return Storage['ExamType'];
-}
+!function () {
 
-function AddToWebSite(script) {
-    let innerScript = document.createElement('script');
-    innerScript.innerHTML = script;
-    document.head.appendChild(innerScript);
-    innerScript.remove();
-}
-
-async function init() {
-    let QuestionType = await GetQuestionType();
-
-    let fun = {
-        'TypingAnswers': SolverTypingQuestions.toString() + `SolverTypingQuestions();`,
-        'MakeASentence': SolverMakeASentence.toString() + `SolverMakeASentence();`,
-        'MultiAnswers': SolverMultiQuestions.toString() + `SolverMultiQuestions();`,
-        'ClickAnswers': SolverClickQuestions.toString() + `SolverClickQuestions();`,
-        'CardsAnswers': SolverCardsQuestions.toString() + `SolverCardsQuestions();`
-    };
-
-    let script = '';
-
-    if (typeof QuestionType === 'object') {
-        QuestionType.forEach(value => {
-            let ScriptFun = fun[value] || null;
-
-            if (ScriptFun !== null) script += ScriptFun;
-        });
-    } else {
-        script = fun[QuestionType] || '';
+    async function GetQuestionType() {
+        const Storage = await new Promise(res => chrome.storage.local.get('ExamType', res));
+        return Storage['ExamType'];
     }
 
-    if (script !== '') AddToWebSite(script);
-}
+    function AddToWebSite(script) {
+        let innerScript = document.createElement('script');
+        innerScript.innerHTML = script;
+        document.head.appendChild(innerScript);
+        innerScript.remove();
+    }
 
-init()
-    .catch(e => console.log(e));
+    async function init() {
+        let QuestionType = await GetQuestionType();
 
-/** Solvers */
+        let fun = {
+            'TypingAnswers': SolverTypingQuestions.toString() + `SolverTypingQuestions();`,
+            'MakeASentence': SolverMakeASentence.toString() + `SolverMakeASentence();`,
+            'MultiAnswers': SolverMultiQuestions.toString() + `SolverMultiQuestions();`,
+            'ClickAnswers': SolverClickQuestions.toString() + `SolverClickQuestions();`,
+            'CardsAnswers': SolverCardsQuestions.toString() + `SolverCardsQuestions();`
+        };
 
-function SolverTypingQuestions() {
-    window.StartedUp = false;
-    StartUp();
-}
+        let script = '';
 
-function SolverMakeASentence() {
-    let GSequence = GuessSequence.length;
+        if (typeof QuestionType === 'object') {
 
-    window.StartedUp = false;
-    StartUp();
+            for (const value of QuestionType) {
 
-    [...Array(GSequence).keys()].forEach(() => {
-        Undo();
-    });
-}
+                if (value === 'SelectAnswers') {
+                    await SolverSelectQuestions();
+                } else {
+                    let ScriptFun = fun[value] || null;
 
-function SolverMultiQuestions() {
-    QuestionArray = QArray.length;
+                    if (ScriptFun !== null) script += ScriptFun;
+                }
+            }
+        } else {
+            if (QuestionType === 'SelectAnswers') {
+                await SolverSelectQuestions();
+            } else {
+                script = fun[QuestionType] || '';
+            }
+        }
 
-    window.StartedUp = false;
-    StartUp();
+        if (script !== '') AddToWebSite(script);
+    }
 
-    QArray = QArray.slice(0, QuestionArray);
-    ChangeQ(1);
-    ChangeQ(-1);
-}
+    init()
+        .catch(e => console.log(e));
 
-function SolverClickQuestions() {
-    Score = 0;
-    const buttons = document.querySelectorAll('.FuncButton');
+    /** Solvers */
 
-    buttons.forEach(value => {
-        if (value.id !== 'NextQButton' && value.id !== 'PrevQButton')
-            value.innerText = '?';
-    });
-    let QuestionArray = QArray.length;
+    async function SolverSelectQuestions() {
+        async function GetSelectAnswersContent() {
+            const Storage = await new Promise(res => chrome.storage.local.get('ContentSelectAnswers', res));
+            return Storage['ContentSelectAnswers'];
+        }
 
-    window.StartedUp = false;
-    StartUp();
+        const ContentScript = await GetSelectAnswersContent();
 
-    QArray = QArray.slice(0, QuestionArray);
-    ChangeQ(1);
-    ChangeQ(-1);
-}
+        if (typeof ContentScript[0] === 'string') {
+            document.querySelector(ContentScript[1]).innerHTML = ContentScript[0];
+        }
 
-function SolverCardsQuestions() {
-    AnswersTried = '';
-    Score = 0;
-    Penalties = 0;
-    DC.forEach((value, index) => {
-        DC[index].GoHome();
-        DC[index].tag = -1;
-        D[index][2] = 0;
-    });
-}
+        let script = `CreateStatusArrays(); Score = 0; Penalties = 0;`;
+
+        AddToWebSite(script);
+    }
+
+    function SolverTypingQuestions() {
+        window.StartedUp = false;
+        StartUp();
+    }
+
+    function SolverMakeASentence() {
+        let GSequence = GuessSequence.length;
+
+        window.StartedUp = false;
+        StartUp();
+
+        [...Array(GSequence).keys()].forEach(() => {
+            Undo();
+        });
+    }
+
+    function SolverMultiQuestions() {
+        QuestionArray = QArray.length;
+
+        window.StartedUp = false;
+        StartUp();
+
+        QArray = QArray.slice(0, QuestionArray);
+        ChangeQ(1);
+        ChangeQ(-1);
+    }
+
+    function SolverClickQuestions() {
+        Score = 0;
+        const buttons = document.querySelectorAll('.FuncButton');
+
+        buttons.forEach(value => {
+            if (value.id !== 'NextQButton' && value.id !== 'PrevQButton')
+                value.innerText = '?';
+        });
+        let QuestionArray = QArray.length;
+
+        window.StartedUp = false;
+        StartUp();
+
+        QArray = QArray.slice(0, QuestionArray);
+        ChangeQ(1);
+        ChangeQ(-1);
+    }
+
+    function SolverCardsQuestions() {
+        AnswersTried = '';
+        Score = 0;
+        Penalties = 0;
+        DC.forEach((value, index) => {
+            DC[index].GoHome();
+            DC[index].tag = -1;
+            D[index][2] = 0;
+        });
+    }
+}();
