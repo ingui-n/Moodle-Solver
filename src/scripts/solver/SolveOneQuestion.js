@@ -14,17 +14,23 @@ async function init() {
     let QuestionType = await GetQuestionType();
 
     let fun = {
-        'SelectAnswers': SolverSelectAnswers.toString() + `SolverSelectAnswers('${QuestionType}');`,
-        'TypingAnswers': SolverTypingAnswers.toString() + `SolverTypingAnswers('${QuestionType}');`,
-        'MakeASentence': SolverMakeASentence.toString() + `SolverMakeASentence('${QuestionType}');`,
-        'MultiAnswers': SolverMultiAnswers.toString() + `SolverMultiAnswers('${QuestionType}');`,
-        'ClickAnswers': SolverClickAnswers.toString() + `SolverClickAnswers('${QuestionType}');`,
-        'CardsAnswers': SolverCardsQuestions.toString() + `SolverCardsQuestions('${QuestionType}');`
+        'SelectAnswers': SolverSelectAnswers.toString() + `SolverSelectAnswers();`,
+        'TypingAnswers': SolverTypingAnswers.toString() + `SolverTypingAnswers();`,
+        'MakeASentence': SolverMakeASentence.toString() + `SolverMakeASentence();`,
+        'MultiAnswers': SolverMultiAnswers.toString() + `SolverMultiAnswers();`,
+        'ClickAnswers': SolverClickAnswers.toString() + `SolverClickAnswers();`,
+        'CardsAnswers': SolverCardsQuestions.toString() + `SolverCardsQuestions();`
     };
 
-    let script = fun[QuestionType] || null;
+    let script = '';
 
-    if (script !== null) AddToWebSite(script);
+    QuestionType.forEach(value => {
+        let ScriptFun = fun[value] || null;
+
+        if (ScriptFun !== null) script += ScriptFun;
+    });
+
+    if (script !== '') AddToWebSite(script);
 }
 
 init()
@@ -116,19 +122,28 @@ function SolverMultiAnswers() {
 }
 
 function SolverClickAnswers() {
+    const buttons = document.querySelectorAll('button');
     let isFilled = false;
 
-    for (let a = 0; a < I.length; a++) {
-        for (let i = 0; i < I[a][3].length; i++) {
-            if (I[a][3][i][3] === 100 && State[a][0] === -1) {
-                const button = document.querySelector(`#Q_${a}_${i}_Btn`);
+    for (let a = 0; a < buttons.length; a++) {
+        const button = buttons[a].outerHTML;
 
-                CheckMCAnswer(a, i, button);
-                isFilled = true;
-                return;
+        let AnsIndex = button.match(/CheckMCAnswer\((\d),(\d),this\)/);
+
+        if (AnsIndex) {
+            AnsIndex = AnsIndex[1];
+
+            for (let i = 0; i < I[AnsIndex][3].length; i++) {
+                if (I[AnsIndex][3][i][3] === 100 && State[AnsIndex][0] === -1) {
+                    const button = document.querySelector(`#Q_${AnsIndex}_${i}_Btn`);
+
+                    CheckMCAnswer(AnsIndex, i, button);
+                    isFilled = true;
+                    return;
+                }
             }
+            if (isFilled) return;
         }
-        if (isFilled) return;
     }
 }
 

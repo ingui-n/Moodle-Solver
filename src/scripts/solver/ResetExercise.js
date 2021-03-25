@@ -14,16 +14,22 @@ async function init() {
     let QuestionType = await GetQuestionType();
 
     let fun = {
-        'TypingAnswers': SolverTypingAnswers.toString() + `SolverTypingAnswers('${QuestionType}');`,
-        'MakeASentence': SolverMakeASentence.toString() + `SolverMakeASentence('${QuestionType}');`,
-        'MultiAnswers': SolverMultiAnswers.toString() + `SolverMultiAnswers('${QuestionType}');`,
-        'ClickAnswers': SolverClickAnswers.toString() + `SolverClickAnswers('${QuestionType}');`,
-        'CardsAnswers': SolverCardsQuestions.toString() + `SolverCardsQuestions('${QuestionType}');`
+        'TypingAnswers': SolverTypingAnswers.toString() + `SolverTypingAnswers();`,
+        'MakeASentence': SolverMakeASentence.toString() + `SolverMakeASentence();`,
+        'MultiAnswers': SolverMultiAnswers.toString() + `SolverMultiAnswers();`,
+        'ClickAnswers': SolverClickAnswers.toString() + `SolverClickAnswers();`,
+        'CardsAnswers': SolverCardsQuestions.toString() + `SolverCardsQuestions();`
     };
 
-    let script = fun[QuestionType] || null;
+    let script = '';
 
-    if (script !== null) AddToWebSite(script);
+    QuestionType.forEach(value => {
+        let ScriptFun = fun[value] || null;
+
+        if (ScriptFun !== null) script += ScriptFun;
+    });
+
+    if (script !== '') AddToWebSite(script);
 }
 
 init()
