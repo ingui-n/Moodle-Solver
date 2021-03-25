@@ -14,20 +14,24 @@ async function init() {
     let QuestionType = await GetQuestionType();
 
     let fun = {
-        'SelectAnswers': SolverSelectQuestions.toString() + `SolverSelectAnswers();`,
-        'TypingAnswers': SolverTypingAnswers.toString() + `SolverTypingAnswers();`,
+        'SelectAnswers': SolverSelectQuestions.toString() + `SolverSelectQuestions();`,
+        'TypingAnswers': SolverTypingQuestions.toString() + `SolverTypingQuestions();`,
         'MakeASentence': SolverMakeASentence.toString() + `SolverMakeASentence();`,
-        'MultiAnswers': SolverMultiQuestions.toString() + `SolverMultiAnswers();`,
-        'ClickAnswers': SolverClickAnswers.toString() + `SolverClickAnswers();`
+        'MultiAnswers': SolverMultiQuestions.toString() + `SolverMultiQuestions();`,
+        'ClickAnswers': SolverClickQuestions.toString() + `SolverClickQuestions();`
     };
 
     let script = '';
 
-    QuestionType.forEach(value => {
-        let ScriptFun = fun[value] || null;
+    if (typeof QuestionType === 'object') {
+        QuestionType.forEach(value => {
+            let ScriptFun = fun[value] || null;
 
-        if (ScriptFun !== null) script += ScriptFun;
-    });
+            if (ScriptFun !== null) script += ScriptFun;
+        });
+    } else {
+        script = fun[QuestionType] || '';
+    }
 
     if (script !== '') AddToWebSite(script);
 }

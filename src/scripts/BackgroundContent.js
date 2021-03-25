@@ -7,7 +7,7 @@ function AddToWebSite(script) {
 }
 
 /** Returns Questions type of the exercise */
-function GetExamType() {
+function FindOutExamType() {
     const buttons = document.querySelectorAll('.FuncButton');//'button'
 
     let ExamTypes = [],
@@ -108,7 +108,7 @@ function SetStaticVariables(ExamType) {
 
 /** Calls everything */
 async function init() {
-    const ExamType = GetExamType();
+    const ExamType = FindOutExamType();
 
     SetStaticVariables(ExamType);
     await CheckHostOptions();

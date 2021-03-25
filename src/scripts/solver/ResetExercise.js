@@ -14,20 +14,24 @@ async function init() {
     let QuestionType = await GetQuestionType();
 
     let fun = {
-        'TypingAnswers': SolverTypingAnswers.toString() + `SolverTypingAnswers();`,
+        'TypingAnswers': SolverTypingQuestions.toString() + `SolverTypingQuestions();`,
         'MakeASentence': SolverMakeASentence.toString() + `SolverMakeASentence();`,
-        'MultiAnswers': SolverMultiAnswers.toString() + `SolverMultiAnswers();`,
-        'ClickAnswers': SolverClickAnswers.toString() + `SolverClickAnswers();`,
+        'MultiAnswers': SolverMultiQuestions.toString() + `SolverMultiQuestions();`,
+        'ClickAnswers': SolverClickQuestions.toString() + `SolverClickQuestions();`,
         'CardsAnswers': SolverCardsQuestions.toString() + `SolverCardsQuestions();`
     };
 
     let script = '';
 
-    QuestionType.forEach(value => {
-        let ScriptFun = fun[value] || null;
+    if (typeof QuestionType === 'object') {
+        QuestionType.forEach(value => {
+            let ScriptFun = fun[value] || null;
 
-        if (ScriptFun !== null) script += ScriptFun;
-    });
+            if (ScriptFun !== null) script += ScriptFun;
+        });
+    } else {
+        script = fun[QuestionType] || '';
+    }
 
     if (script !== '') AddToWebSite(script);
 }
@@ -37,7 +41,7 @@ init()
 
 /** Solvers */
 
-function SolverTypingAnswers() {
+function SolverTypingQuestions() {
     window.StartedUp = false;
     StartUp();
 }
@@ -53,7 +57,7 @@ function SolverMakeASentence() {
     });
 }
 
-function SolverMultiAnswers() {
+function SolverMultiQuestions() {
     QuestionArray = QArray.length;
 
     window.StartedUp = false;
@@ -64,7 +68,7 @@ function SolverMultiAnswers() {
     ChangeQ(-1);
 }
 
-function SolverClickAnswers() {
+function SolverClickQuestions() {
     Score = 0;
     const buttons = document.querySelectorAll('.FuncButton');
 

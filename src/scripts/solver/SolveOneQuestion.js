@@ -14,21 +14,25 @@ async function init() {
     let QuestionType = await GetQuestionType();
 
     let fun = {
-        'SelectAnswers': SolverSelectAnswers.toString() + `SolverSelectAnswers();`,
-        'TypingAnswers': SolverTypingAnswers.toString() + `SolverTypingAnswers();`,
+        'TypingAnswers': SolverTypingQuestions.toString() + `SolverTypingQuestions();`,
+        'SelectAnswers': SolverSelectQuestions.toString() + `SolverSelectQuestions();`,
         'MakeASentence': SolverMakeASentence.toString() + `SolverMakeASentence();`,
-        'MultiAnswers': SolverMultiAnswers.toString() + `SolverMultiAnswers();`,
-        'ClickAnswers': SolverClickAnswers.toString() + `SolverClickAnswers();`,
+        'MultiAnswers': SolverMultiQuestions.toString() + `SolverMultiQuestions();`,
+        'ClickAnswers': SolverClickQuestions.toString() + `SolverClickQuestions();`,
         'CardsAnswers': SolverCardsQuestions.toString() + `SolverCardsQuestions();`
     };
 
     let script = '';
 
-    QuestionType.forEach(value => {
-        let ScriptFun = fun[value] || null;
+    if (typeof QuestionType === 'object') {
+        QuestionType.forEach(value => {
+            let ScriptFun = fun[value] || null;
 
-        if (ScriptFun !== null) script += ScriptFun;
-    });
+            if (ScriptFun !== null) script += ScriptFun;
+        });
+    } else {
+        script = fun[QuestionType] || '';
+    }
 
     if (script !== '') AddToWebSite(script);
 }
@@ -38,7 +42,7 @@ init()
 
 /** Solvers */
 
-function SolverSelectAnswers() {
+function SolverSelectQuestions() {
     let isFilled = false;
     for (let a = 0; a < Status.length; a++) {
         const Question = document.querySelector(`#${Status[a][2]}`);
@@ -60,7 +64,7 @@ function SolverSelectAnswers() {
     }
 }
 
-function SolverTypingAnswers() {
+function SolverTypingQuestions() {
     for (let i = 0; i < I.length; i++) {
         const segment = document.querySelector(`#Gap${i}`);
 
@@ -91,7 +95,7 @@ function SolverMakeASentence() {
     AddSegment(Ans[0]);
 }
 
-function SolverMultiAnswers() {
+function SolverMultiQuestions() {
     const buttons = document.querySelectorAll('button');
     let isChanged = false;
 
@@ -121,7 +125,7 @@ function SolverMultiAnswers() {
     }
 }
 
-function SolverClickAnswers() {
+function SolverClickQuestions() {
     const buttons = document.querySelectorAll('button');
     let isFilled = false;
 

@@ -17,17 +17,21 @@ async function init() {
         'SelectAnswers': SolverSelectQuestions.toString() + `SolverSelectQuestions();`,
         'TypingAnswers': SolverTypingQuestions.toString() + `SolverTypingQuestions();`,
         'MakeASentence': SolverMakeASentence.toString() + `SolverMakeASentence();`,
-        'MultiAnswers': SolverMultiQuestions.toString() + `SolverMultiAnswers();`,
+        'MultiAnswers': SolverMultiQuestions.toString() + `SolverMultiQuestions();`,
         'CardsAnswers': SolverCardsQuestions.toString() + `SolverCardsQuestions();`
     };
 
     let script = '';
 
-    QuestionType.forEach(value => {
-        let ScriptFun = fun[value] || null;
+    if (typeof QuestionType === 'object') {
+        QuestionType.forEach(value => {
+            let ScriptFun = fun[value] || null;
 
-        if (ScriptFun !== null) script += ScriptFun;
-    });
+            if (ScriptFun !== null) script += ScriptFun;
+        });
+    } else {
+        script = fun[QuestionType] || '';
+    }
 
     if (script !== '') AddToWebSite(script);
 }
@@ -38,14 +42,6 @@ init()
 /** Solvers */
 
 function SolverSelectQuestions() {
-    I.forEach((value, index) => {
-        const segment = document.querySelector(`#Gap${index}`);
-
-        if (segment.value === '') segment.value = I[index][1][0];
-    });
-}
-
-function SolverTypingQuestions() {
     Status.forEach((value, index) => {
         const Question = document.querySelector(`#${Status[index][2]}`);
 
@@ -59,6 +55,14 @@ function SolverTypingQuestions() {
                 }
             }
         }
+    });
+}
+
+function SolverTypingQuestions() {
+    I.forEach((value, index) => {
+        const segment = document.querySelector(`#Gap${index}`);
+
+        if (segment.value === '') segment.value = I[index][1][0];
     });
 }
 

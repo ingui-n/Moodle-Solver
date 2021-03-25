@@ -14,20 +14,24 @@ async function init() {
     let QuestionType = await GetQuestionType();
 
     let fun = {
-        'SelectAnswers': SolverSelectAnswers.toString() + `SolverSelectAnswers();`,
-        'TypingAnswers': SolverTypingAnswers.toString() + `SolverTypingAnswers();`,
+        'SelectAnswers': SolverSelectQuestions.toString() + `SolverSelectQuestions();`,
+        'TypingAnswers': SolverTypingQuestions.toString() + `SolverTypingQuestions();`,
         'MakeASentence': SolverMakeASentence.toString() + `SolverMakeASentence();`,
-        'MultiAnswers': SolverMultiAnswers.toString() + `SolverMultiAnswers();`,
+        'MultiAnswers': SolverMultiQuestions.toString() + `SolverMultiQuestions();`,
         'CardsAnswers': SolverCardsQuestions.toString() + `SolverCardsQuestions();`
     };
 
     let script = '';
 
-    QuestionType.forEach(value => {
-        let ScriptFun = fun[value] || null;
+    if (typeof QuestionType === 'object') {
+        QuestionType.forEach(value => {
+            let ScriptFun = fun[value] || null;
 
-        if (ScriptFun !== null) script += ScriptFun;
-    });
+            if (ScriptFun !== null) script += ScriptFun;
+        });
+    } else {
+        script = fun[QuestionType] || '';
+    }
 
     if (script !== '') AddToWebSite(script);
 }
@@ -37,7 +41,7 @@ init()
 
 /** Solvers */
 
-function SolverSelectAnswers() {
+function SolverSelectQuestions() {
     let isFilled = false;
     for (let a = 0; a < Status.length; a++) {
         const Question = document.querySelector(`#${Status[a][2]}`);
@@ -57,7 +61,7 @@ function SolverSelectAnswers() {
     }
 }
 
-function SolverTypingAnswers() {
+function SolverTypingQuestions() {
     for (let i = 0; i < I.length; i++) {
         const segment = document.querySelector(`#Gap${i}`);
 
@@ -77,7 +81,7 @@ function SolverMakeASentence() {
     AddSegment(AnsIndex);
 }
 
-function SolverMultiAnswers() {
+function SolverMultiQuestions() {
     const buttons = document.querySelectorAll('button');
 
     for (let a = 0; a < buttons.length; a++) {
