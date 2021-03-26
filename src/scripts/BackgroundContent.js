@@ -178,7 +178,9 @@
         };
 
         switch (ExamType) {
-            default:
+            case 'ClickAnswers':
+                WebsiteOptions.FillAll = false;
+                WebsiteOptions.FillOne = false;
                 break;
         }
 

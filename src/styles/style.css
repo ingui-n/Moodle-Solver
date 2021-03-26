@@ -3,3 +3,12 @@ body {
     width: 200px;
     height: 200px;
 }
+
+.img__moodle {
+    height: 20px;
+    padding-right: 5px;
+}
+
+.h__title {
+    display: flex;
+}
