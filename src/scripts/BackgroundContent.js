@@ -6,6 +6,7 @@
                 const isSetTab = await IsSetTabInStorage(message.tabName, message.tabUrl);
 
                 await CheckTabsExpiration();
+                SetEasterEgg();
 
                 if (!isSetTab) {
                     await SetTabInfo(message.tabName, message.tabUrl);
@@ -141,6 +142,13 @@
 
         chrome.storage.local.set({'HostOptions': HostOptions});
         return HostOptions;
+    }
+
+    /** Sets easter egg to the tab */
+    function SetEasterEgg() {
+        const div = document.querySelector('.logininfo');
+
+        if (div) div.innerText = 'Máš 100 jednotek pozornosti';
     }
 
     /** Calls host option script */

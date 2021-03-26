@@ -3,7 +3,6 @@
     chrome.runtime.onMessage.addListener(message => {
         if (typeof message === 'object') {
             if (message.Reset) {
-                console.log('reset');
                 init(message.Reset);
             }
         }
@@ -101,7 +100,7 @@
         const buttons = document.querySelectorAll('.FuncButton');
 
         buttons.forEach(value => {
-            if (value.id !== 'NextQButton' && value.id !== 'PrevQButton')
+            if (value.textContent.includes('?'))
                 value.innerText = '?';
         });
         let QuestionArray = QArray.length;

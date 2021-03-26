@@ -21,7 +21,6 @@
             'TypingAnswers': SolverTypingQuestions.toString() + `SolverTypingQuestions();`,
             'MakeASentence': SolverMakeASentence.toString() + `SolverMakeASentence();`,
             'MultiAnswers': SolverMultiQuestions.toString() + `SolverMultiQuestions();`,
-            'ClickAnswers': SolverClickQuestions.toString() + `SolverClickQuestions();`,
             'CardsAnswers': SolverCardsQuestions.toString() + `SolverCardsQuestions();`
         };
 
@@ -40,5 +39,28 @@
         if (script !== '') AddToWebSite(script);
     }
 
-    // todo create send file
+    /** Senders */
+    function SolverSelectQuestions() {
+        CheckAnswers();
+    }
+
+    function SolverTypingQuestions() {
+        CheckAnswers();
+    }
+
+    function SolverMakeASentence() {
+        CheckAnswer(0);
+    }
+
+    function SolverMultiQuestions() {
+        for (let i = 0; i < I.length; i++) {
+            try {
+                CheckMultiSelAnswer(i);
+            } catch (e) {}
+        }
+    }
+
+    function SolverCardsQuestions() {
+        CheckAnswers();
+    }
 }();
