@@ -1,4 +1,68 @@
-!function () {
+!async function () {
+
+    chrome.runtime.onMessage.addListener(async message => {
+        if (typeof message === 'object') {
+            if (message.tabName && message.tabUrl) {
+                const isSetTab = await IsSetTabInStorage(message.tabName, message.tabUrl);
+
+                await CheckTabsExpiration();
+
+                if (!isSetTab) {
+                    await SetTabInfo(message.tabName, message.tabUrl);
+                }
+
+                await ModifyWebsite();
+            }
+        }
+    });
+
+    /** Checks if is set current tab to storage */
+    async function IsSetTabInStorage(tabName, tabUrl) {
+        const tabs = await GetTabsCache();
+
+        if (typeof tabs === 'object') {
+            for (const [key, value] of Object.entries(tabs)) {
+
+                if (key === tabName && value.url === tabUrl)
+                    return true;
+            }
+        } else {
+            SetTabStorageVariable();
+        }
+        return false;
+    }
+
+    /** Returns TabsCache */
+    async function GetTabsCache() {
+        const target = await new Promise(res => chrome.storage.local.get('TabsCache', res));
+        return target['TabsCache'];
+    }
+
+    /** Sets default storage variable "TabsCache" */
+    function SetTabStorageVariable() {
+        chrome.storage.local.set({'TabsCache': {}});
+    }
+
+    /** Sets new tab to local storage */
+    async function SetTabInfo(tabName, tabUrl) {
+        const ExamType = await FindOutExamType();
+        const StaticVariables = GetStaticVariables(ExamType);
+        const TabExamContent = GetTabExamContent(ExamType);
+
+        let tab = {
+            'url': tabUrl,
+            'ExamType': ExamType,
+            'StaticVariables': StaticVariables,
+            'TabExamContent': TabExamContent,
+            'BuildDate': Date.now()
+        }
+
+        const TabsCache = await GetTabsCache();
+
+        TabsCache[tabName] = tab;
+
+        chrome.storage.local.set({'TabsCache': TabsCache});
+    }
 
     /** Add Host option script to the MOODLE website */
     function AddToWebSite(script) {
@@ -9,11 +73,10 @@
     }
 
     /** Returns Questions type of the exercise */
-    function FindOutExamType() {
+    async function FindOutExamType() {
         const buttons = document.querySelectorAll('.FuncButton');//'button'
 
-        let ExamTypes = [],
-            ContentSelectAnswers;
+        let ExamTypes = [];
 
         for (let i = 0; i < buttons.length; i++) {
             const button = buttons[i].outerHTML;
@@ -27,10 +90,6 @@
                     ExamTypes.push('CardsAnswers');
                 } else if (SelectElements > FillElements) {
                     ExamTypes.push('SelectAnswers');
-
-                    const SelectContent = document.querySelector('#Questions').outerHTML;
-
-                    if (!ContentSelectAnswers) ContentSelectAnswers = SelectContent;
                 } else {
                     ExamTypes.push('TypingAnswers');
                 }
@@ -49,18 +108,26 @@
             ExamTypes = [...new Set(ExamTypes)];
         }
 
-        chrome.storage.local.set({'ContentSelectAnswers': [ContentSelectAnswers, '#Questions']});
-
         return ExamTypes;
     }
 
+    /** Returns exam content from the tab */
+    function GetTabExamContent(ExamType) {
+        if (ExamType === 'SelectAnswers') {
+            const SelectContent = document.querySelector('#Questions').outerHTML;
+
+            return [SelectContent, '#Questions'];
+        }
+        return [];
+    }
+
     /** Gets Host Options from local storage */
-    async function CheckHostOptions(re) {
+    async function CheckHostOptions() {
         const Storage = await new Promise(res => chrome.storage.local.get('HostOptions', res));
 
         if (typeof Storage['HostOptions'] === 'undefined')
-            return re ? SetDefaultHostOptions() : null;
-        return re ? Storage['HostOptions'] : null;
+            return SetDefaultHostOptions();
+        return Storage['HostOptions'];
     }
 
     /** Sets default Host Options */
@@ -79,7 +146,7 @@
             'ShuffleQuestions': ShuffleQuestions.toString() + `ShuffleQuestions();`
         };
 
-        const HostOptions = await CheckHostOptions(true);
+        const HostOptions = await CheckHostOptions();
 
         for (const [key, value] of Object.entries(HostOptions)) {
 
@@ -89,7 +156,7 @@
     }
 
     /** Sets Website Options to local storage */
-    function SetStaticVariables(ExamType) {
+    function GetStaticVariables(ExamType) {
         let WebsiteOptions = {
             'FillAll': true,
             'FillOne': true,
@@ -99,27 +166,28 @@
             'Send': true
         };
 
-        /*switch (ExamType) {
-            case 'SelectAnswers':
-                WebsiteOptions.Reset = false;
-        }*/
+        switch (ExamType) {
+            default:
+                break;
+        }
 
-        chrome.storage.local.set({'ExamType': ExamType});
-        chrome.storage.local.set({'StaticOptions': WebsiteOptions});
+        return WebsiteOptions;
     }
 
-    /** Calls everything */
-    async function init() {
-        const ExamType = FindOutExamType();
+    /** Checks if tab expired and if expired it will be removed */
+    async function CheckTabsExpiration() {
+        const tabs = await GetTabsCache();
+        const CurrentDate = Date.now();
 
-        SetStaticVariables(ExamType);
-        await CheckHostOptions();
+        if (typeof tabs === 'object') {
+            for (const [key, value] of Object.entries(tabs)) {
 
-        await ModifyWebsite();
+                if (CurrentDate - value.BuildDate > 172800000) // todo test if it works 22:24 36.03. 2021
+                    tabs[key] = undefined;
+            }
+        }
+        chrome.storage.local.set({'TabsCache': tabs});
     }
-
-    init()
-        .catch(e => console.log(e));
 
     /** Modifying script */
     function ShuffleQuestions() {

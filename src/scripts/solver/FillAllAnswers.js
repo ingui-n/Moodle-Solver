@@ -1,9 +1,12 @@
-!function () {
+!async function () {
 
-    async function GetQuestionType() {
-        const Storage = await new Promise(res => chrome.storage.local.get('ExamType', res));
-        return Storage['ExamType'];
-    }
+    chrome.runtime.onMessage.addListener(message => {
+        if (typeof message === 'object') {
+            if (message.SolverExType) {
+                init(message.SolverExType);
+            }
+        }
+    });
 
     function AddToWebSite(script) {
         let innerScript = document.createElement('script');
@@ -12,9 +15,7 @@
         innerScript.remove();
     }
 
-    async function init() {
-        let QuestionType = await GetQuestionType();
-
+    function init(QuestionType) {
         let fun = {
             'SelectAnswers': SolverSelectQuestions.toString() + `SolverSelectQuestions();`,
             'TypingAnswers': SolverTypingQuestions.toString() + `SolverTypingQuestions();`,
@@ -37,9 +38,6 @@
 
         if (script !== '') AddToWebSite(script);
     }
-
-    init()
-        .catch(e => console.log(e));
 
     /** Solvers */
 

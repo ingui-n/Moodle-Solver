@@ -1,7 +1,7 @@
 {
-  "name": "MOODLE Quiz Solver",
+  "name": "MOODLE Exam Solver",
   "description": "This extension allows you to master the hardest MOODLE exams.",
-  "version": "0.2.0",
+  "version": "0.2.7",
   "permissions": ["storage", "declarativeContent", "tabs", "*://*/"],
   "browser_action": {
     "default_popup": "popup.html"

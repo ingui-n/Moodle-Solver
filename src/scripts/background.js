@@ -3,19 +3,26 @@
 
     chrome.tabs.onActivated.addListener(tab => {
         chrome.tabs.get(tab.tabId, currentTabInfo => {
-            CallBackgroundScript(currentTabInfo.url);
+            CallBackgroundScript(currentTabInfo, tab.tabId, currentTabInfo.url);
         });
     })
 
     chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
         if (changeInfo.status === 'loading')
-            CallBackgroundScript(tab.url);
+            CallBackgroundScript(tab, tabId, tab.url);
     });
 
     /** Calls the BackgroundContent script */
-    function CallBackgroundScript(url) {
+    function CallBackgroundScript(tab, id, url) {
         if (TestUrl(url))
-            chrome.tabs.executeScript(null, {file: '/src/scripts/BackgroundContent.js'});
+            chrome.tabs.executeScript(null, {file: '/src/scripts/BackgroundContent.js'}, () => {
+
+                let message = {
+                    'tabName': `${tab.windowId}-${tab.id}`,
+                    'tabUrl': url
+                }
+                chrome.tabs.sendMessage(id, message);
+            });
     }
 
     /** Check URL if is MOODLE */

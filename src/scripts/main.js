@@ -1,21 +1,21 @@
 !function () {
     "use strict";
 
-    const query = {active: true, currentWindow: true};
-
     document.addEventListener('readystatechange', e => {
         if (e.target.readyState === 'complete') {
+
+            const query = {active: true, currentWindow: true};
 
             chrome.tabs.query(query, tabs => {
                 const url = tabs[0].url.toString();
 
-                CheckURL(url) ? GetScript() : PrintBadWebSite();
+                CheckURL(url) ? GetScript(tabs[0]) : PrintBadWebSite();
             });
         }
     });
 
     /** Calls JS for popup.html content */
-    async function GetScript() {
+    async function GetScript(tab) {
         const bFillAll = document.querySelector('.btn__fill-all');
         const bFillOne = document.querySelector('.btn__fill-one');
         const bSolveAll = document.querySelector('.btn__solve-all');
@@ -23,6 +23,10 @@
         const bReset = document.querySelector('.btn__reset');
         const cShuffle = document.querySelector('.chk__shuffle-questions');
         const bSend = document.querySelector('.btn__send');
+
+        const TabsCache = await new Promise(res => chrome.storage.local.get('TabsCache', res));
+
+        const CurrentTab = TabsCache['TabsCache'][`${tab.windowId}-${tab.id}`];
 
         /** Gets Host Options from local storage */
         async function GetHostOptions() {
@@ -61,19 +65,15 @@
             });
         }
 
-        /** Gets Static Options from local storage */
-        async function GetStaticOptions() {
-            const Storage = await new Promise(res => chrome.storage.local.get('StaticOptions', res));
-            return Storage['StaticOptions'];
-        }
-
         /** Setup click listeners for solver */
         async function SetupStaticListener(element, value, fileName) {
-            const StaticOptions = await GetStaticOptions();
+            const StaticOptions = CurrentTab.StaticVariables;
 
             if (StaticOptions[value] === true) {
                 element.addEventListener('click', () => {
-                    chrome.tabs.executeScript(null, {file: `/src/scripts/solver/${fileName}.js`});
+                    chrome.tabs.executeScript(null, {file: `/src/scripts/solver/${fileName}.js`}, () => {
+                        chrome.tabs.sendMessage(tab.id, {'SolverExType': CurrentTab.ExamType});
+                    });
                 });
             } else {
                 element.disabled = true;
