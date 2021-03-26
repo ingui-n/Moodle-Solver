@@ -70,10 +70,10 @@
             const StaticOptions = CurrentTab.StaticVariables;
 
             if (StaticOptions[value] === true) {
+                chrome.tabs.executeScript(null, {file: `/src/scripts/solver/${fileName}.js`});
+
                 element.addEventListener('click', () => {
-                    chrome.tabs.executeScript(null, {file: `/src/scripts/solver/${fileName}.js`}, () => {
-                        chrome.tabs.sendMessage(tab.id, {'SolverExType': CurrentTab.ExamType});
-                    });
+                    chrome.tabs.sendMessage(tab.id, {[value]: CurrentTab.ExamType});
                 });
             } else {
                 element.disabled = true;

@@ -46,6 +46,9 @@
     /** Sets new tab to local storage */
     async function SetTabInfo(tabName, tabUrl) {
         const ExamType = await FindOutExamType();
+
+        if (ExamType === []) return;
+
         const StaticVariables = GetStaticVariables(ExamType);
         const TabExamContent = GetTabExamContent(ExamType);
 

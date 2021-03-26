@@ -2,8 +2,8 @@
 
     chrome.runtime.onMessage.addListener(message => {
         if (typeof message === 'object') {
-            if (message.SolverExType) {
-                init(message.SolverExType);
+            if (message.FillAll) {
+                init(message.FillAll);
             }
         }
     });

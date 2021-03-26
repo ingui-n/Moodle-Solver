@@ -2,8 +2,8 @@
 
     chrome.runtime.onMessage.addListener(message => {
         if (typeof message === 'object') {
-            if (message.SolverExType) {
-                init(message.SolverExType);
+            if (message.Send) {
+                init(message.Send);
             }
         }
     });
@@ -40,5 +40,5 @@
         if (script !== '') AddToWebSite(script);
     }
 
-    // todo create reset file
+    // todo create send file
 }();
