@@ -1,7 +1,12 @@
+html {
+    height: 150px;
+    background-image: url("/src/images/back4.jpg");
+    background-size: cover;
+}
+
 body {
-    background-color: aliceblue;
-    width: 200px;
-    height: 200px;
+    width: 250px;
+    height: 150px;
 }
 
 .img__moodle {
@@ -9,6 +14,64 @@ body {
     padding-right: 5px;
 }
 
+.content {
+
+}
+
 .h__title {
     display: flex;
+    justify-content: center;
+}
+
+.fun__content {
+    text-align: center;
+}
+
+.fun__container {
+    display: flex;
+    flex-direction: column;
+}
+
+.fun__top, .fun__down {
+    margin-bottom: 5px;
+}
+
+.fun__second-container {
+    position: absolute;
+    width: 250px;
+}
+
+.btn__show-more-options {
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.body__show-more {
+    animation-name: show-more-options;
+    animation-duration: 2s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes show-more-options {
+    from {
+        height: 150px;
+    }
+    to {
+        height: 250px;
+    }
+}
+
+.body__show-less {
+    animation-name: show-less-options;
+    animation-duration: 2s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes show-less-options {
+    from {
+        height: 250px;
+    }
+    to {
+        height: 150px;
+    }
 }

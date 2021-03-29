@@ -2,24 +2,34 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="src/styles/style.css">
+    <link rel="icon" type="image/png" href="src/images/pic16.png">
     <title>Tester</title>
 </head>
 <body>
-<div>
+
+<div class="content">
     <h2 class="h__title"><img src="src/images/moodle-logo.png" class="img__moodle" alt="Moodle"> Exam Solver</h2>
-    <div>
-        <button class="btn__fill-all">Fill all answers</button>
-        <button class="btn__fill-one">Fill actual answer</button>
-        <button class="btn__solve-all">Solve all questions</button>
-        <button class="btn__solve-one">Solve actual/first bad question</button>
-        <button class="btn__reset">Reset test</button>
-        <button class="btn__send">Send to check</button>
-        <label>Shuffle Questions
-            <input type="checkbox" class="chk__shuffle-questions">
-        </label>
+    <div class="fun__content">
+        <div class="fun__container fun__first-container">
+            <button type="button" class="fun__top btn__solve-one">Solve next/first bad question</button>
+            <button type="button" class="fun__top btn__solve-all">Solve all questions</button>
+            <button type="button" class="fun__top btn__reset">Reset test</button>
+        </div>
+        <button type="button" class="btn__show-more-options">Show more</button>
+        <div class="fun__container fun__second-container">
+            <button type="button" class="fun__down btn__fill-one">Fill next answer</button>
+            <button type="button" class="fun__down btn__fill-all">Fill all answers</button>
+            <button type="button" class="fun__down btn__send">Send to check</button>
+            <div class="fun__down">
+                <label>Shuffle Questions
+                    <input type="checkbox" class="chk__shuffle-questions">
+                </label>
+            </div>
+        </div>
     </div>
-    <p class="p__answers"></p>
+    <p class="p__about"></p>
 </div>
+
 <script src="src/scripts/main.js"></script>
 </body>
 </html>

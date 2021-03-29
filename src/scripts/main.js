@@ -1,7 +1,7 @@
 !function () {
     "use strict";
 
-    document.addEventListener('readystatechange', e => {
+    /*document.addEventListener('readystatechange', e => {
         if (e.target.readyState === 'complete') {
 
             const query = {active: true, currentWindow: true};
@@ -12,7 +12,7 @@
                 CheckURL(url) ? GetScript(tabs[0]) : PrintBadWebSite();
             });
         }
-    });
+    });*/
 
     /** Calls JS for popup.html content */
     async function GetScript(tab) {
@@ -27,6 +27,8 @@
         const TabsCache = await new Promise(res => chrome.storage.local.get('TabsCache', res));
 
         const CurrentTab = TabsCache['TabsCache'][`${tab.windowId}-${tab.id}`];
+
+        // todo add script there
 
         /** Gets Host Options from local storage */
         async function GetHostOptions() {
@@ -109,4 +111,32 @@
         }
         return false;
     }
+
+    function ShowMoreOptions() {
+        const bShowOptions = document.querySelector('.btn__show-more-options');
+        const html = document.documentElement;
+        const body = document.body;
+        let i = 0;
+
+        bShowOptions.addEventListener('click', () => {
+
+            if (i === 0) {
+                body.classList.toggle('body__show-more');
+                html.classList.toggle('body__show-more');
+            } else {
+                body.classList.toggle('body__show-more');
+                html.classList.toggle('body__show-more');
+                body.classList.toggle('body__show-less');
+                html.classList.toggle('body__show-less');
+            }
+
+            if (i % 2 === 0) {
+                bShowOptions.textContent = 'Show less';
+            } else {
+                bShowOptions.textContent = 'Show more';
+            }
+            i++;
+        });
+    }
+    ShowMoreOptions();
 }();
