@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -8,22 +9,24 @@
 <body>
 
 <div class="content">
-    <h2 class="h__title"><img src="src/images/moodle-logo.png" class="img__moodle" alt="Moodle"> Exam Solver</h2>
+    <div class="d__title">
+        <img src="src/images/moodle-logo.png" class="img__moodle" alt="Moodle">
+        <h2 class="h__title">Exam Solver</h2>
+    </div>
     <div class="fun__content">
         <div class="fun__container fun__first-container">
-            <button type="button" class="fun__top btn__solve-one">Solve next/first bad question</button>
-            <button type="button" class="fun__top btn__solve-all">Solve all questions</button>
-            <button type="button" class="fun__top btn__reset">Reset test</button>
+            <button type="button" class="btn__fun btn__solve-one">Solve next/first bad question</button>
+            <button type="button" class="btn__fun btn__solve-all">Solve all questions</button>
+            <button type="button" class="btn__fun btn__reset">Reset test</button>
         </div>
-        <button type="button" class="btn__show-more-options">Show more</button>
+        <button type="button" class="btn__show-more-options btn__show-more">Show more</button>
         <div class="fun__container fun__second-container">
-            <button type="button" class="fun__down btn__fill-one">Fill next answer</button>
-            <button type="button" class="fun__down btn__fill-all">Fill all answers</button>
-            <button type="button" class="fun__down btn__send">Send to check</button>
-            <div class="fun__down">
-                <label>Shuffle Questions
-                    <input type="checkbox" class="chk__shuffle-questions">
-                </label>
+            <button type="button" class="btn__fun btn__fill-one">Fill next answer</button>
+            <button type="button" class="btn__fun btn__fill-all">Fill all answers</button>
+            <button type="button" class="btn__fun btn__send">Send to check</button>
+            <div class="check__fun">
+                <label for="btn__shuffle">Shuffle Questions</label>
+                <input type="checkbox" id="btn__shuffle" class="chk__shuffle-questions">
             </div>
         </div>
     </div>

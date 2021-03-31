@@ -114,21 +114,18 @@
 
     function ShowMoreOptions() {
         const bShowOptions = document.querySelector('.btn__show-more-options');
+        const dContent = document.querySelector('.content');
         const html = document.documentElement;
         const body = document.body;
         let i = 0;
 
         bShowOptions.addEventListener('click', () => {
 
-            if (i === 0) {
-                body.classList.toggle('body__show-more');
-                html.classList.toggle('body__show-more');
-            } else {
-                body.classList.toggle('body__show-more');
-                html.classList.toggle('body__show-more');
-                body.classList.toggle('body__show-less');
-                html.classList.toggle('body__show-less');
-            }
+            body.classList.toggle('body__show-more');
+            html.classList.toggle('body__show-more');
+            dContent.classList.toggle('content-more-options');
+            bShowOptions.classList.toggle('btn__show-less');
+            bShowOptions.classList.toggle('btn__show-more');
 
             if (i % 2 === 0) {
                 bShowOptions.textContent = 'Show less';
