@@ -14,7 +14,7 @@
 
     /** Calls the BackgroundContent script */
     function CallBackgroundScript(tab, id, url) {
-        if (TestUrl(url))
+        if (TestUrl(url)) {
             chrome.tabs.executeScript(null, {file: '/src/scripts/BackgroundContent.js'}, () => {
 
                 let message = {
@@ -23,6 +23,7 @@
                 }
                 chrome.tabs.sendMessage(id, message);
             });
+        }
     }
 
     /** Check URL if is MOODLE */

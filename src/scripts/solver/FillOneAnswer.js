@@ -1,12 +1,15 @@
-!async function () {
+!function () {
 
-    chrome.runtime.onMessage.addListener(message => {
+    function ListenerHandler(message) {
         if (typeof message === 'object') {
-            if (message.FillOne) {
-                init(message.FillOne);
+            if (message.SolverMessage) {
+                chrome.runtime.onMessage.removeListener(ListenerHandler);
+                init(message.SolverMessage);
             }
         }
-    });
+    }
+
+    chrome.runtime.onMessage.addListener(ListenerHandler);
 
     function AddToWebSite(script) {
         let innerScript = document.createElement('script');
@@ -15,7 +18,9 @@
         innerScript.remove();
     }
 
-    function init(QuestionType) {
+    function init(message) {
+        const QuestionType = message.FillOne;
+
         let fun = {
             'SelectAnswers': SolverSelectQuestions.toString() + `SolverSelectQuestions();`,
             'TypingAnswers': SolverTypingQuestions.toString() + `SolverTypingQuestions();`,

@@ -1,7 +1,8 @@
 !function () {
     "use strict";
 
-    /*document.addEventListener('readystatechange', e => {
+    // todo call after host website loading is completed
+    document.addEventListener('readystatechange', e => {
         if (e.target.readyState === 'complete') {
 
             const query = {active: true, currentWindow: true};
@@ -9,13 +10,38 @@
             chrome.tabs.query(query, tabs => {
                 const url = tabs[0].url.toString();
 
-                CheckURL(url) ? GetScript(tabs[0]) : PrintBadWebSite();
+                CheckURL(url) ? GetScript(tabs[0]) : PrintBadWebSite('You must be on the MOODLE website!');
             });
         }
-    });*/
+    });
 
     /** Calls JS for popup.html content */
     async function GetScript(tab) {
+
+        function ShowMoreOptions() {
+            const bShowOptions = document.querySelector('.btn__show-more-options');
+            const dContent = document.querySelector('.content');
+            const html = document.documentElement;
+            const body = document.body;
+            let i = 0;
+
+            bShowOptions.addEventListener('click', () => {
+
+                body.classList.toggle('body__show-more');
+                html.classList.toggle('body__show-more');
+                dContent.classList.toggle('content-more-options');
+                bShowOptions.classList.toggle('btn__show-less');
+                bShowOptions.classList.toggle('btn__show-more');
+
+                if (i % 2 === 0) {
+                    bShowOptions.textContent = 'Show less';
+                } else {
+                    bShowOptions.textContent = 'Show more';
+                }
+                i++;
+            });
+        }
+
         const bFillAll = document.querySelector('.btn__fill-all');
         const bFillOne = document.querySelector('.btn__fill-one');
         const bSolveAll = document.querySelector('.btn__solve-all');
@@ -28,7 +54,12 @@
 
         const CurrentTab = TabsCache['TabsCache'][`${tab.windowId}-${tab.id}`];
 
-        // todo add script there
+        if (!IsSetExamType(CurrentTab)) {
+            PrintBadWebSite('No supported exam found!');
+            return;
+        }
+
+        ShowMoreOptions();
 
         /** Gets Host Options from local storage */
         async function GetHostOptions() {
@@ -72,13 +103,21 @@
             const StaticOptions = CurrentTab.StaticVariables;
 
             if (StaticOptions[value] === true) {
-                chrome.tabs.executeScript(null, {file: `/src/scripts/solver/${fileName}.js`});
 
                 element.addEventListener('click', () => {
-                    chrome.tabs.sendMessage(tab.id, {[value]: CurrentTab.ExamType});
+                    chrome.tabs.executeScript(null, {file: `/src/scripts/solver/${fileName}.js`}, () => {
+
+                        let message = {
+                            [value]: CurrentTab.ExamType,
+                            'TabExamContent': CurrentTab.TabExamContent
+                        };
+
+                        chrome.tabs.sendMessage(tab.id, {'SolverMessage': message});
+                    });
                 });
             } else {
                 element.disabled = true;
+                // todo add styles for the button
             }
         }
 
@@ -93,9 +132,23 @@
     }
 
     /** Prints bad website message */
-    function PrintBadWebSite() {
-        //todo page width style
-        document.querySelector('body').innerHTML = 'You must be on the moodle website!';
+    function PrintBadWebSite(ErrorMessage) {
+        const dContent = document.querySelector('.content');
+        const html = document.documentElement;
+        const body = document.body;
+        let paragraph = document.createElement('p');
+
+        html.classList.add('html__bad-website');
+        body.classList.add('body__bad-website');
+
+        paragraph.textContent = ErrorMessage;
+        paragraph.classList.add('p__bad-website');
+        dContent.parentElement.replaceChild(paragraph, dContent);
+    }
+
+    /** Checks if is set ExamType */
+    function IsSetExamType(CurrentTab) {
+        return typeof CurrentTab.ExamType === 'string';
     }
 
     /** Checks URL if is MOODLE */
@@ -111,29 +164,4 @@
         }
         return false;
     }
-
-    function ShowMoreOptions() {
-        const bShowOptions = document.querySelector('.btn__show-more-options');
-        const dContent = document.querySelector('.content');
-        const html = document.documentElement;
-        const body = document.body;
-        let i = 0;
-
-        bShowOptions.addEventListener('click', () => {
-
-            body.classList.toggle('body__show-more');
-            html.classList.toggle('body__show-more');
-            dContent.classList.toggle('content-more-options');
-            bShowOptions.classList.toggle('btn__show-less');
-            bShowOptions.classList.toggle('btn__show-more');
-
-            if (i % 2 === 0) {
-                bShowOptions.textContent = 'Show less';
-            } else {
-                bShowOptions.textContent = 'Show more';
-            }
-            i++;
-        });
-    }
-    ShowMoreOptions();
 }();

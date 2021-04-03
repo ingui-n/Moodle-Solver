@@ -1,12 +1,15 @@
-!async function () {
+!function () {
 
-    chrome.runtime.onMessage.addListener(message => {
+    function ListenerHandler(message) {
         if (typeof message === 'object') {
-            if (message.Reset) {
-                init(message.Reset);
+            if (message.SolverMessage) {
+                chrome.runtime.onMessage.removeListener(ListenerHandler);
+                init(message.SolverMessage);
             }
         }
-    });
+    }
+
+    chrome.runtime.onMessage.addListener(ListenerHandler);
 
     function AddToWebSite(script) {
         let innerScript = document.createElement('script');
@@ -15,7 +18,10 @@
         innerScript.remove();
     }
 
-    async function init(QuestionType) {
+    function init(message) {
+        const QuestionType = message.Reset;
+        const TabExamContent = message.TabExamContent;
+
         let fun = {
             'TypingAnswers': SolverTypingQuestions.toString() + `SolverTypingQuestions();`,
             'MakeASentence': SolverMakeASentence.toString() + `SolverMakeASentence();`,
@@ -31,7 +37,7 @@
             for (const value of QuestionType) {
 
                 if (value === 'SelectAnswers') {
-                    await SolverSelectQuestions();
+                    SolverSelectQuestions(TabExamContent);
                 } else {
                     let ScriptFun = fun[value] || null;
 
@@ -40,7 +46,7 @@
             }
         } else {
             if (QuestionType === 'SelectAnswers') {
-                await SolverSelectQuestions();
+                SolverSelectQuestions(TabExamContent);
             } else {
                 script = fun[QuestionType] || '';
             }
@@ -51,16 +57,9 @@
 
     /** Solvers */
 
-    async function SolverSelectQuestions() {
-        async function GetSelectAnswersContent() {
-            const Storage = await new Promise(res => chrome.storage.local.get('ContentSelectAnswers', res));
-            return Storage['ContentSelectAnswers'];
-        }
-
-        const ContentScript = await GetSelectAnswersContent();
-
-        if (typeof ContentScript[0] === 'string') {
-            document.querySelector(ContentScript[1]).innerHTML = ContentScript[0];
+    function SolverSelectQuestions(TabExamContent) {
+        if (typeof TabExamContent === 'object') {
+            document.querySelector(TabExamContent[1]).innerHTML = TabExamContent[0];
         }
 
         let script = `CreateStatusArrays(); Score = 0; Penalties = 0;`;

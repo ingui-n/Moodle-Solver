@@ -8,9 +8,8 @@
                 await CheckTabsExpiration();
                 SetEasterEgg();
 
-                if (!isSetTab) {
+                if (!isSetTab)
                     await SetTabInfo(message.tabName, message.tabUrl);
-                }
 
                 await ModifyWebsite();
             }
@@ -195,7 +194,7 @@
         if (typeof tabs === 'object') {
             for (const [key, value] of Object.entries(tabs)) {
 
-                if (CurrentDate - value.BuildDate > 172800000) // todo test if it works 22:24 36.03. 2021
+                if (CurrentDate - value.BuildDate > 172800000)
                     tabs[key] = undefined;
             }
         }
