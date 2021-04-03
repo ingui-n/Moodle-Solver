@@ -1,17 +1,46 @@
 !function () {
     "use strict";
 
-    // todo call after host website loading is completed
-    document.addEventListener('readystatechange', e => {
+    /** Gets Tab, process until Tab status is complete */
+    async function GetTab() {
+        const query = {active: true, currentWindow: true};
+
+        let Tab = await new Promise((resolve, reject) => {
+
+            try {
+                chrome.tabs.query(query, async tabs => {
+                    resolve(tabs[0]);
+                });
+            } catch (e) {
+                reject(e);
+            }
+        });
+
+        if (Tab.status !== 'complete') {
+            PrintBadWebSite('Initializing...'); //todo rebuild PrintBadWebsite
+            Tab = await GetTab();
+        } else {
+            //PrintBadWebSite(SolverContent);
+        }
+        return Tab;
+    }
+
+    function GetSolverContent() {
+        return document.querySelector('.content').cloneNode(true);
+    }
+
+    const SolverContent = GetSolverContent();
+
+    document.addEventListener('readystatechange', async e => {
         if (e.target.readyState === 'complete') {
 
-            const query = {active: true, currentWindow: true};
+            const Tab = await GetTab();
 
-            chrome.tabs.query(query, tabs => {
-                const url = tabs[0].url.toString();
-
-                CheckURL(url) ? GetScript(tabs[0]) : PrintBadWebSite('You must be on the MOODLE website!');
-            });
+            if (CheckURL(Tab.url)) {
+                await GetScript(Tab);
+            } else {
+                PrintBadWebSite('You must be on the MOODLE website!');
+            }
         }
     });
 

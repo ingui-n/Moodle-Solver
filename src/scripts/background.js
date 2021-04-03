@@ -15,7 +15,12 @@
     /** Calls the BackgroundContent script */
     function CallBackgroundScript(tab, id, url) {
         if (TestUrl(url)) {
-            chrome.tabs.executeScript(null, {file: '/src/scripts/BackgroundContent.js'}, () => {
+            const details = {
+                runAt: 'document_end',
+                file: '/src/scripts/BackgroundContent.js'
+            };
+
+            chrome.tabs.executeScript(null, details, () => {
 
                 let message = {
                     'tabName': `${tab.windowId}-${tab.id}`,

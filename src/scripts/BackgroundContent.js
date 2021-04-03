@@ -1,8 +1,9 @@
 !async function () {
-
     chrome.runtime.onMessage.addListener(async message => {
         if (typeof message === 'object') {
             if (message.tabName && message.tabUrl) {
+                await ModifyWebsite();
+
                 const isSetTab = await IsSetTabInStorage(message.tabName, message.tabUrl);
 
                 await CheckTabsExpiration();
@@ -10,8 +11,6 @@
 
                 if (!isSetTab)
                     await SetTabInfo(message.tabName, message.tabUrl);
-
-                await ModifyWebsite();
             }
         }
     });
