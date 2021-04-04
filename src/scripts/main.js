@@ -1,4 +1,4 @@
-!function () {
+!async function () {
     "use strict";
 
     /** Gets Tab, process until Tab status is complete */
@@ -16,12 +16,9 @@
             }
         });
 
-        if (Tab.status !== 'complete') {
-            PrintBadWebSite('Initializing...'); //todo rebuild PrintBadWebsite
+        if (Tab.status !== 'complete')
             Tab = await GetTab();
-        } else {
-            //PrintBadWebSite(SolverContent);
-        }
+
         return Tab;
     }
 
@@ -31,41 +28,33 @@
 
     const SolverContent = GetSolverContent();
 
-    document.addEventListener('readystatechange', async e => {
-        if (e.target.readyState === 'complete') {
+    PrintToPopup(false,'Initializing...', 1);
 
-            const Tab = await GetTab();
+    const Tab = await GetTab();
 
-            if (CheckURL(Tab.url)) {
-                await GetScript(Tab);
-            } else {
-                PrintBadWebSite('You must be on the MOODLE website!');
-            }
-        }
-    });
+    if (CheckURL(Tab.url)) {
+        PrintToPopup(true, SolverContent);
+        await GetScript(Tab);
+    } else {
+        PrintToPopup(false, 'You must be on the MOODLE website!', 2);
+    }
 
     /** Calls JS for popup.html content */
     async function GetScript(tab) {
 
         function ShowMoreOptions() {
-            const bShowOptions = document.querySelector('.btn__show-more-options');
-            const dContent = document.querySelector('.content');
+            const bShowOptions = document.querySelector('.btn__show-more');
             const html = document.documentElement;
-            const body = document.body;
             let i = 0;
 
             bShowOptions.addEventListener('click', () => {
 
-                body.classList.toggle('body__show-more');
-                html.classList.toggle('body__show-more');
-                dContent.classList.toggle('content-more-options');
-                bShowOptions.classList.toggle('btn__show-less');
-                bShowOptions.classList.toggle('btn__show-more');
-
                 if (i % 2 === 0) {
                     bShowOptions.textContent = 'Show less';
+                    html.style.setProperty('--html-height', '405px');
                 } else {
                     bShowOptions.textContent = 'Show more';
+                    html.style.setProperty('--html-height', '246px');
                 }
                 i++;
             });
@@ -84,7 +73,7 @@
         const CurrentTab = TabsCache['TabsCache'][`${tab.windowId}-${tab.id}`];
 
         if (!IsSetExamType(CurrentTab)) {
-            PrintBadWebSite('No supported exam found!');
+            PrintToPopup(false, 'No supported exam found!', 2);
             return;
         }
 
@@ -160,19 +149,30 @@
         await SetupLabelListener(cShuffle, 'ShuffleQuestions', 'Checkbox');
     }
 
-    /** Prints bad website message */
-    function PrintBadWebSite(ErrorMessage) {
+    /** Prints website message */
+    function PrintToPopup(PrintSolver, Message, MessageLen) {
+        const html = document.querySelector('html');
+        const body = document.querySelector('body');
         const dContent = document.querySelector('.content');
-        const html = document.documentElement;
-        const body = document.body;
-        let paragraph = document.createElement('p');
+        const pMessage = document.querySelector('.message');
 
-        html.classList.add('html__bad-website');
-        body.classList.add('body__bad-website');
+        pMessage.classList.forEach(value => {
+            if (value !== 'message')
+                pMessage.classList.remove(value);
+        });
 
-        paragraph.textContent = ErrorMessage;
-        paragraph.classList.add('p__bad-website');
-        dContent.parentElement.replaceChild(paragraph, dContent);
+        if (PrintSolver) {
+            html.style.setProperty('--html-height', '246px');
+            body.appendChild(SolverContent);
+            pMessage.textContent = '';
+        } else {
+            if (dContent) {
+                body.removeChild(dContent);
+            }
+
+            pMessage.classList.add(`message-${MessageLen}-line`);
+            pMessage.textContent = Message;
+        }
     }
 
     /** Checks if is set ExamType */

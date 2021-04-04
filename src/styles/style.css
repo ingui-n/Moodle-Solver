@@ -1,15 +1,39 @@
 @import url('https://fonts.googleapis.com/css2?family=Fira+Sans&display=swap');
 
+:root {
+    --html-width: 250px;
+    --html-height: 190px;
+}
+
 html {
-    height: 150px;
+    width: var(--html-width);
+    height: var(--html-height);
+    background: #AAA;
     transition: height 1s;
-    border: 2px solid aliceblue;
-    --html-height: 191px;
+}
+
+html:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: var(--html-width);
+    height: var(--html-height);
+    background: linear-gradient(60deg, #f79533, #f37055, #ef4e7b, #a166ab, #5073b8, #1098ad, #07b39b, #6fba82);
+    animation: background-migration 3s ease alternate infinite;
+    background-size: 300% 300%;
+    z-index: -1;
+    transition: height 1s;
 }
 
 body {
-    width: 250px;
-    height: 150px;
+    display: flex;
+    justify-content: center;
+    width: calc(-4px + var(--html-width));
+    height: calc(-4px + var(--html-height));
+    background: #1D1F20;
+    position: relative;
+    left: 2px;
+    top: 2px;
     margin: 0;
     transition: height 1s;
 }
@@ -26,36 +50,6 @@ button {
 .img__moodle {
     height: 20px;
     padding-right: 5px;
-}
-
-.content {
-    --borderWidth: 2px;
-    background: #1D1F20;
-    position: relative;
-    height: calc(35px + var(--html-height));
-    transition: height 1s;
-}
-
-.content:after {
-    content: '';
-    position: absolute;
-    top: calc(-1 * var(--borderWidth));
-    left: calc(-1 * var(--borderWidth));
-    height: calc(41px + var(--html-height));
-    width: calc(100% + var(--borderWidth) * 2);
-    background: linear-gradient(60deg, #f79533, #f37055, #ef4e7b, #a166ab, #5073b8, #1098ad, #07b39b, #6fba82);
-    z-index: -3;
-    animation: background-migration 3s ease alternate infinite;
-    background-size: 300% 300%;
-    transition: height 1s;
-}
-
-.content-more-options {
-    height: 376px;
-}
-
-.content-more-options:after {
-    height: 380px;
 }
 
 @keyframes background-migration {
@@ -92,7 +86,7 @@ button {
 
 .fun__content {
     text-align: center;
-    position: sticky;
+    position: fixed;
 }
 
 .fun__container {
@@ -100,37 +94,31 @@ button {
     flex-direction: column;
 }
 
-.btn__fun, .check__fun {
-    margin-bottom: 5px;
-}
-
 .btn__fun {
-    padding: 5px;
-    text-align: center;
+    padding-top: 7px;
+    padding-bottom: 7px;
     text-decoration: none;
     display: inline-block;
     font-size: 14px;
-    margin: 5px 24px;
+    margin: 7px;
     transition-duration: .5s;
     cursor: pointer;
-    border: 2px solid transparent;
+    border: transparent;
     background: #1D1F20;
     position: relative;
-    color: white;
 }
 
-.btn__fun:before  {
+.btn__fun:before {
     content: '';
     position: absolute;
     height: 35px;
-    width: 206px;
-    left: 0;
+    width: 201px;
+    left: -2px;
+    top: -2px;
     background: linear-gradient(60deg, #f79533, #f37055, #ef4e7b, #a166ab, #5073b8, #1098ad, #07b39b, #6fba82);
-    z-index: -1;
     animation: background-migration 3s ease alternate infinite;
     background-size: 300% 300%;
-    margin-top: -9px;
-    margin-left: -4px;
+    z-index: -1;
 }
 
 .btn__fun:hover {
@@ -138,111 +126,52 @@ button {
     -webkit-text-fill-color: white;
 }
 
-.fun__second-container {
-    position: fixed;
-    width: 250px;
-}
-
-.btn__show-less {
-    padding: 5px 11px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 14px;
-    margin: 12px;
-    transition-duration: .5s;
-    cursor: pointer;
-    border: 2px solid transparent;
-    transition: width 1s;
-}
-
-.btn__show-less:before {
-    content: '';
-    position: absolute;
-    height: 35px;
-    width: 92px;
-    left: 0;
-    background: linear-gradient(60deg, #f79533, #f37055, #ef4e7b, #a166ab, #5073b8, #1098ad, #07b39b, #6fba82);
-    z-index: -1;
-    animation: background-migration 3s ease alternate infinite;
-    background-size: 300% 300%;
-    margin-top: -9px;
-    margin-left: -4px;
-}
-
 .btn__show-more {
-    padding: 5px 10px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 14px;
-    margin: 12px;
-    transition-duration: .5s;
-    cursor: pointer;
-    border: 2px solid transparent;
-    transition: width 1s;
-}
-
-.btn__show-more-options {
     background: #1D1F20;
     position: relative;
-    color: white;
+    width: 110px;
+    padding: 7px 18px;
+    text-decoration: none;
+    font-size: 14px;
+    margin: 12px;
+    cursor: pointer;
+    border: transparent;
 }
 
 .btn__show-more:before {
     content: '';
     position: absolute;
     height: 35px;
-    width: 98px;
-    left: 0;
+    width: 114px;
+    left: -2px;
+    top: -2px;
     background: linear-gradient(60deg, #f79533, #f37055, #ef4e7b, #a166ab, #5073b8, #1098ad, #07b39b, #6fba82);
     z-index: -1;
     animation: background-migration 3s ease alternate infinite;
     background-size: 300% 300%;
-    margin-top: -9px;
-    margin-left: -4px;
 }
 
-.body__show-more {
-    height: 380px;
-}
-
-/** For bad website **/
-.p__bad-website {
+/** Message **/
+.message {
+    display: none;
+    width: inherit;
     font-size: 24px;
     text-align: center;
-    color: white;
-    background: linear-gradient(60deg, #f79533, #f37055, #ef4e7b, #a166ab, #5073b8, #1098ad, #07b39b, #6fba82);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    height: 70px;
-    background-size: 300% 300%;
-    animation: background-migration 3s ease alternate infinite;
-}
-
-.html__bad-website {
-    height: 118px;
-    transition: none;
-    background: #1D1F20;
-    position: sticky;
-}
-
-.html__bad-website:after {
-    content: '';
     position: absolute;
-    top: -2px;
-    left: -2px;
-    height: 122px;
-    width: 260px;
     background: linear-gradient(60deg, #f79533, #f37055, #ef4e7b, #a166ab, #5073b8, #1098ad, #07b39b, #6fba82);
-    z-index: -1;
     animation: background-migration 3s ease alternate infinite;
     background-size: 300% 300%;
+    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text;
 }
 
-.body__bad-website {
-    transition: none;
-    background-color: #1D1F20;
-    height: 115px;
-    padding-top: 1px;
+.message-1-line {
+    display: block;
+    top: 52px;
 }
+
+.message-2-line {
+    display: block;
+    top: 38px;
+}
+/** todo synchronize color */
