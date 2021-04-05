@@ -1,4 +1,5 @@
-#HotPot Exam Solver 
+<h2>HotPot Exam Solver</h2>
+
 This solver is for a very old HotPot plugin from learning portal MOODLE.
 
 I do not know a version of the MOODLE nor HotPot, but this is how look like the version I test this on.
