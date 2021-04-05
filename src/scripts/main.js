@@ -28,12 +28,11 @@
 
     const SolverContent = GetSolverContent();
 
-    PrintToPopup(false,'Initializing...', 1);
+    PrintToPopup(false, 'Initializing...', 1);
 
     const Tab = await GetTab();
 
     if (CheckURL(Tab.url)) {
-        PrintToPopup(true, SolverContent);
         await GetScript(Tab);
     } else {
         PrintToPopup(false, 'You must be on the MOODLE website!', 2);
@@ -42,6 +41,7 @@
     /** Calls JS for popup.html content */
     async function GetScript(tab) {
 
+        /** Adds listener for showing more options */
         function ShowMoreOptions() {
             const bShowOptions = document.querySelector('.btn__show-more');
             const html = document.documentElement;
@@ -59,25 +59,6 @@
                 i++;
             });
         }
-
-        const bFillAll = document.querySelector('.btn__fill-all');
-        const bFillOne = document.querySelector('.btn__fill-one');
-        const bSolveAll = document.querySelector('.btn__solve-all');
-        const bSolveOne = document.querySelector('.btn__solve-one');
-        const bReset = document.querySelector('.btn__reset');
-        const cShuffle = document.querySelector('.chk__shuffle-questions');
-        const bSend = document.querySelector('.btn__send');
-
-        const TabsCache = await new Promise(res => chrome.storage.local.get('TabsCache', res));
-
-        const CurrentTab = TabsCache['TabsCache'][`${tab.windowId}-${tab.id}`];
-
-        if (!IsSetExamType(CurrentTab)) {
-            PrintToPopup(false, 'No supported exam found!', 2);
-            return;
-        }
-
-        ShowMoreOptions();
 
         /** Gets Host Options from local storage */
         async function GetHostOptions() {
@@ -135,9 +116,31 @@
                 });
             } else {
                 element.disabled = true;
-                // todo add styles for the button
+                element.title = 'Not supported on this one';
+                element.classList.add('btn__fun-not-supported');
             }
         }
+
+        const TabsCache = await new Promise(res => chrome.storage.local.get('TabsCache', res));
+
+        const CurrentTab = TabsCache['TabsCache'][`${tab.windowId}-${tab.id}`];
+
+        if (!IsSetExamType(CurrentTab)) {
+            PrintToPopup(false, 'No supported exam found!', 2);
+            return;
+        }
+
+        PrintToPopup(true, SolverContent);
+
+        ShowMoreOptions();
+
+        const bFillAll = document.querySelector('.btn__fill-all');
+        const bFillOne = document.querySelector('.btn__fill-one');
+        const bSolveAll = document.querySelector('.btn__solve-all');
+        const bSolveOne = document.querySelector('.btn__solve-one');
+        const bReset = document.querySelector('.btn__reset');
+        const cShuffle = document.querySelector('.chk__shuffle-questions');
+        const bSend = document.querySelector('.btn__send');
 
         await SetupStaticListener(bFillAll, 'FillAll', 'FillAllAnswers');
         await SetupStaticListener(bFillOne, 'FillOne', 'FillOneAnswer');
@@ -164,20 +167,32 @@
         if (PrintSolver) {
             html.style.setProperty('--html-height', '246px');
             body.appendChild(SolverContent);
+
+            ResetBackgroundColorAnimation();
+
             pMessage.textContent = '';
         } else {
-            if (dContent) {
+            if (dContent)
                 body.removeChild(dContent);
-            }
 
             pMessage.classList.add(`message-${MessageLen}-line`);
             pMessage.textContent = Message;
         }
     }
 
+    /** Resets background color animation */
+    function ResetBackgroundColorAnimation() {
+        const html = document.querySelector('html');
+
+        html.style.setProperty('--color-animation', 'null');
+        setTimeout(() => {
+            html.style.setProperty('--color-animation', 'background-migration 3s ease alternate infinite');
+        }, 10);
+    }
+
     /** Checks if is set ExamType */
     function IsSetExamType(CurrentTab) {
-        return typeof CurrentTab.ExamType === 'string';
+        return typeof CurrentTab.ExamType !== 'undefined';
     }
 
     /** Checks URL if is MOODLE */

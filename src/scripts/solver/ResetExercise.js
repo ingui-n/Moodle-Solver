@@ -99,7 +99,7 @@
         const buttons = document.querySelectorAll('.FuncButton');
 
         buttons.forEach(value => {
-            if (value.textContent.includes('?'))
+            if (value.id.startsWith('Q') && value.id.endsWith('Btn'))
                 value.innerText = '?';
         });
         let QuestionArray = QArray.length;

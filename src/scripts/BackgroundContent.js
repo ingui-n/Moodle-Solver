@@ -105,11 +105,10 @@
         }
 
         if (!ExamTypes.includes('MultiAnswers') && !ExamTypes.includes('ClickAnswers')) {
-            ExamTypes = ExamTypes[0];
+            ExamTypes = [ExamTypes[0]];
         } else {
             ExamTypes = [...new Set(ExamTypes)];
         }
-
         return ExamTypes;
     }
 
@@ -175,12 +174,14 @@
             'Send': true
         };
 
-        switch (ExamType) {
-            case 'ClickAnswers':
-                WebsiteOptions.FillAll = false;
-                WebsiteOptions.FillOne = false;
-                break;
-        }
+        ExamType.forEach(value => {
+            switch (value) {
+                case 'ClickAnswers':
+                    WebsiteOptions.FillAll = false;
+                    WebsiteOptions.FillOne = false;
+                    break;
+            }
+        });
 
         return WebsiteOptions;
     }
