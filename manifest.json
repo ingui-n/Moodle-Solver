@@ -1,8 +1,8 @@
 {
   "name": "MOODLE Exam Solver",
   "description": "This extension allows you to master the hardest MOODLE exams.",
-  "version": "0.2.7",
-  "permissions": ["storage", "declarativeContent", "tabs", "*://*/"],
+  "version": "0.2.17",
+  "permissions": ["storage", "tabs", "*://*/"],
   "browser_action": {
     "default_popup": "popup.html"
   },
@@ -16,6 +16,6 @@
     "48": "./src/images/pic48.png",
     "128": "./src/images/pic128.png"
   },
-  "content_security_policy": "script-src 'self' 'sha256-buwfl/YYIyq2hjhtEwKblSHoC4xTVlLHuXON6J7lG2g='; object-src 'self';",
+  "content_security_policy": "script-src 'self'; object-src 'self';",
   "manifest_version": 2
 }

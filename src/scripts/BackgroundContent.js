@@ -114,7 +114,7 @@
 
     /** Returns exam content from the tab */
     function GetTabExamContent(ExamType) {
-        if (ExamType === 'SelectAnswers') {
+        if (ExamType === 'SelectAnswers' || ExamType.includes('SelectAnswers')) {
             const SelectContent = document.querySelector('#Questions').outerHTML;
 
             return [SelectContent, '#Questions'];

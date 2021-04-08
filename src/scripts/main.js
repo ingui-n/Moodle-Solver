@@ -192,7 +192,7 @@
 
     /** Checks if is set ExamType */
     function IsSetExamType(CurrentTab) {
-        return typeof CurrentTab.ExamType !== 'undefined';
+        return CurrentTab.ExamType[0] !== null && typeof CurrentTab.ExamType !== 'undefined';
     }
 
     /** Checks URL if is MOODLE */
