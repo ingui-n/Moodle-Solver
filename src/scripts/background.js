@@ -33,12 +33,14 @@
 
     /** Check URL if is MOODLE */
     function TestUrl(url) {
-        const match = url.match(/^https?:\/\/www\.([\w-]+)?\.?([\w-]+)?\.?([\w-]+)?\.?\.\w+\//);
+        if (url) {
+            const match = url.match(/^https?:\/\/www\.([\w-]+)?\.?([\w-]+)?\.?([\w-]+)?\.?\.\w+\//);
 
-        if (match) {
-            for (let i = 1; i < 4; i++) {
-                if (typeof match[i] !== 'undefined' && match[i] === 'moodle') {
-                    return true;
+            if (match) {
+                for (let i = 1; i < 4; i++) {
+                    if (typeof match[i] !== 'undefined' && match[i] === 'moodle') {
+                        return true;
+                    }
                 }
             }
         }
